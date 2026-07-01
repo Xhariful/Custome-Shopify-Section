@@ -34,6 +34,9 @@
     gap: 2px;
     flex-wrap: wrap;
   }
+  #sole-tabs-{{ section.id }} .stab-mobile-nav-wrapper {
+    display: none;
+  }
   #sole-tabs-{{ section.id }} .stab-btn {
     padding: {{ section.settings.tab_pad_v }}px {{ section.settings.tab_pad_h }}px;
     font-size: {{ section.settings.tab_font_size }}px;
@@ -80,7 +83,6 @@
     box-shadow: 0 24px 60px rgba(0,0,0,.35);
   }
   #sole-tabs-{{ section.id }} .stab-card-img {
-    height: {{ section.settings.img_height }}px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -88,6 +90,15 @@
     overflow: hidden;
     position: relative;
     transition: transform .38s;
+    {%- if section.settings.img_ratio == 'square' -%}
+      aspect-ratio: 1 / 1;
+    {%- elsif section.settings.img_ratio == 'portrait' -%}
+      aspect-ratio: 3 / 4;
+    {%- elsif section.settings.img_ratio == 'landscape' -%}
+      aspect-ratio: 4 / 3;
+    {%- else -%}
+      height: {{ section.settings.img_height }}px;
+    {%- endif -%}
   }
   #sole-tabs-{{ section.id }} .stab-card:hover .stab-card-img { transform: scale(1.05); }
   #sole-tabs-{{ section.id }} .stab-card-img img { width:100%; height:100%; object-fit:cover; display:block; }
@@ -104,6 +115,11 @@
     font-weight: 600;
     margin-bottom: 5px;
     color: {{ section.settings.card_text }};
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* Maximum 2 lines */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   #sole-tabs-{{ section.id }} .stab-card-sub {
     font-size: .78rem;
@@ -142,6 +158,29 @@
     color: {{ section.settings.bg_color }};
     transform: scale(1.05);
   }
+  #sole-tabs-{{ section.id }} .stab-see-more-wrapper {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: center;
+    margin-top: 24px;
+  }
+  #sole-tabs-{{ section.id }} .stab-see-more-btn {
+    padding: 12px 32px;
+    background: transparent;
+    border: 1px solid {{ section.settings.accent_color }};
+    color: {{ section.settings.title_color }};
+    font-size: .75rem;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: 600;
+    transition: background .25s, color .25s;
+  }
+  #sole-tabs-{{ section.id }} .stab-see-more-btn:hover {
+    background: {{ section.settings.accent_color }};
+    color: {{ section.settings.tab_active_text }};
+  }
 
   @media screen and (max-width: 749px) {
     #sole-tabs-{{ section.id }} {
@@ -151,8 +190,30 @@
       grid-template-columns: repeat({{ section.settings.mobile_cols }}, 1fr);
     }
     #sole-tabs-{{ section.id }} .stab-title { font-size: {{ section.settings.mobile_title_size }}px; }
-    #sole-tabs-{{ section.id }} .stab-top { flex-direction: column; align-items: flex-start; }
-    #sole-tabs-{{ section.id }} .stab-nav { width: 100%; overflow-x: auto; }
+    #sole-tabs-{{ section.id }} .stab-top { flex-direction: column; align-items: stretch; }
+    #sole-tabs-{{ section.id }} .stab-nav { display: none; }
+    
+    #sole-tabs-{{ section.id }} .stab-mobile-nav-wrapper {
+      display: block;
+      width: 100%;
+    }
+    #sole-tabs-{{ section.id }} .stab-select {
+      width: 100%;
+      padding: 12px;
+      font-size: {{ section.settings.tab_font_size }}px;
+      background: {{ section.settings.nav_bg }};
+      border: 1px solid {{ section.settings.nav_border }};
+      color: {{ section.settings.title_color }};
+      border-radius: 4px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      font-family: inherit;
+      outline: none;
+    }
+    #sole-tabs-{{ section.id }} .stab-select option {
+      background: {{ section.settings.bg_color }};
+      color: {{ section.settings.title_color }};
+    }
   }
 {%- endstyle -%}
 
@@ -162,6 +223,7 @@
       {%- if section.settings.label != blank -%}<span class="stab-lbl">{{ section.settings.label }}</span>{%- endif -%}
       {%- if section.settings.title != blank -%}<h2 class="stab-title">{{ section.settings.title }}</h2>{%- endif -%}
     </div>
+    
     <nav class="stab-nav" role="tablist">
       {%- assign tab_index = 0 -%}
       {%- for block in section.blocks -%}
@@ -176,6 +238,18 @@
         {%- endif -%}
       {%- endfor -%}
     </nav>
+
+    <div class="stab-mobile-nav-wrapper">
+      <select class="stab-select" aria-label="Select collection tab">
+        {%- assign tab_index = 0 -%}
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'tab' -%}
+            <option value="stab-panel-{{ section.id }}-{{ tab_index }}">{{ block.settings.tab_name }}</option>
+            {%- assign tab_index = tab_index | plus: 1 -%}
+          {%- endif -%}
+        {%- endfor -%}
+      </select>
+    </div>
   </div>
 
   {%- assign tab_index = 0 -%}
@@ -186,8 +260,10 @@
         class="stab-panel{% if tab_index == 0 %} active{% endif %}"
         role="tabpanel"
       >
-        {%- assign product_list = block.settings.collection.products -%}
+        {%- assign current_collection = block.settings.collection -%}
+        {%- assign product_list = current_collection.products -%}
         {%- assign limit = block.settings.products_to_show | default: 3 -%}
+        
         {%- if product_list != blank -%}
           {%- for product in product_list limit: limit -%}
             <a href="{{ product.url }}" class="stab-card">
@@ -209,6 +285,13 @@
               </div>
             </a>
           {%- endfor -%}
+
+          {%- if product_list.size > limit -%}
+            <div class="stab-see-more-wrapper">
+              <a href="{{ current_collection.url }}" class="stab-see-more-btn">See More</a>
+            </div>
+          {%- endif -%}
+
         {%- else -%}
           {%- for i in (1..limit) -%}
             <div class="stab-card">
@@ -235,15 +318,35 @@
 (function(){
   var sec = document.getElementById('sole-tabs-{{ section.id }}');
   if(!sec) return;
+
+  function switchTab(targetId) {
+    sec.querySelectorAll('.stab-panel').forEach(function(p){ p.classList.remove('active'); });
+    var panel = document.getElementById(targetId);
+    if(panel) panel.classList.add('active');
+  }
+
   sec.querySelectorAll('.stab-btn').forEach(function(btn){
     btn.addEventListener('click', function(){
       sec.querySelectorAll('.stab-btn').forEach(function(b){ b.classList.remove('active'); });
-      sec.querySelectorAll('.stab-panel').forEach(function(p){ p.classList.remove('active'); });
       btn.classList.add('active');
-      var panel = document.getElementById(btn.dataset.tab);
-      if(panel) panel.classList.add('active');
+      switchTab(btn.dataset.tab);
+      
+      var select = sec.querySelector('.stab-select');
+      if(select) select.value = btn.dataset.tab;
     });
   });
+
+  var mobileSelect = sec.querySelector('.stab-select');
+  if(mobileSelect) {
+    mobileSelect.addEventListener('change', function(e){
+      switchTab(e.target.value);
+      
+      sec.querySelectorAll('.stab-btn').forEach(function(b){ 
+        b.classList.remove('active'); 
+        if(b.dataset.tab === e.target.value) b.classList.add('active');
+      });
+    });
+  }
 })();
 </script>
 
@@ -284,10 +387,18 @@
     { "type": "range","id": "price_size",        "label": "Price Font (px)",        "min":14,"max":28,"step":1,"default":22 },
 
     { "type": "header", "content": "Card & Layout" },
+    { "type": "select", "id": "img_ratio", "label": "Image Aspect Ratio", "default": "original",
+        "options": [
+          { "value": "original", "label": "Original (Uses Height Below)" },
+          { "value": "square", "label": "Square (1:1)" },
+          { "value": "portrait", "label": "Portrait (3:4)" },
+          { "value": "landscape", "label": "Landscape (4:3)" }
+        ]
+    },
+    { "type": "range","id": "img_height",   "label": "Image Height (px - Original setting only)","min":100,"max":356,"step":8,"default":196 },
     { "type": "range","id": "desktop_cols", "label": "Desktop Columns","min":2,"max":4,"step":1,"default":3 },
     { "type": "range","id": "mobile_cols",  "label": "Mobile Columns", "min":1,"max":3,"step":1,"default":1 },
     { "type": "range","id": "card_gap",     "label": "Card Gap (px)",  "min":8,"max":40,"step":2,"default":22 },
-    { "type": "range","id": "img_height",   "label": "Image Height (px)","min":100,"max":356,"step":8,"default":196 },
     { "type": "range","id": "card_radius",  "label": "Card Radius (px)","min":0,"max":20,"step":1,"default":6 },
     { "type": "range","id": "body_pad",     "label": "Card Body Padding (px)","min":8,"max":40,"step":2,"default":20 },
     { "type": "range","id": "hover_lift",   "label": "Hover Lift (px)","min":0,"max":20,"step":1,"default":9 },
@@ -311,7 +422,7 @@
       "settings": [
         { "type": "text",       "id": "tab_name",        "label": "Tab Label",          "default": "Running" },
         { "type": "collection", "id": "collection",      "label": "Collection" },
-        { "type": "range",      "id": "products_to_show","label": "Products to Show","min":2,"max":6,"step":1,"default":3 }
+        { "type": "range",      "id": "products_to_show","label": "Products to Show","min":2,"max":8,"step":1,"default":4 }
       ]
     }
   ],
