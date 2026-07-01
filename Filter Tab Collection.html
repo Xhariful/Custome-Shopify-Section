@@ -1,0 +1,330 @@
+{%- style -%}
+  #sole-tabs-{{ section.id }} {
+    padding: {{ section.settings.padding_top }}px {{ section.settings.side_padding }}px {{ section.settings.padding_bottom }}px;
+    background: {{ section.settings.bg_color }};
+  }
+  #sole-tabs-{{ section.id }} .stab-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 46px;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+  #sole-tabs-{{ section.id }} .stab-lbl {
+    display: block;
+    font-size: {{ section.settings.lbl_size }}px;
+    letter-spacing: .42em;
+    color: {{ section.settings.accent_color }};
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  #sole-tabs-{{ section.id }} .stab-title {
+    font-size: {{ section.settings.title_size }}px;
+    font-weight: 700;
+    color: {{ section.settings.title_color }};
+    line-height: .94;
+  }
+  #sole-tabs-{{ section.id }} .stab-nav {
+    display: flex;
+    background: {{ section.settings.nav_bg }};
+    border: 1px solid {{ section.settings.nav_border }};
+    border-radius: 4px;
+    padding: 4px;
+    gap: 2px;
+    flex-wrap: wrap;
+  }
+  #sole-tabs-{{ section.id }} .stab-btn {
+    padding: {{ section.settings.tab_pad_v }}px {{ section.settings.tab_pad_h }}px;
+    font-size: {{ section.settings.tab_font_size }}px;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: {{ section.settings.tab_inactive_text }};
+    background: transparent;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: color .22s, background .22s;
+    white-space: nowrap;
+    font-family: inherit;
+  }
+  #sole-tabs-{{ section.id }} .stab-btn.active {
+    background: {{ section.settings.accent_color }};
+    color: {{ section.settings.tab_active_text }};
+    font-weight: 700;
+  }
+  #sole-tabs-{{ section.id }} .stab-btn:hover:not(.active) { color: {{ section.settings.title_color }}; }
+
+  #sole-tabs-{{ section.id }} .stab-panel {
+    display: none;
+    grid-template-columns: repeat({{ section.settings.desktop_cols }}, 1fr);
+    gap: {{ section.settings.card_gap }}px;
+    animation: stTabIn .38s ease;
+  }
+  #sole-tabs-{{ section.id }} .stab-panel.active { display: grid; }
+  @keyframes stTabIn { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+
+  #sole-tabs-{{ section.id }} .stab-card {
+    background: {{ section.settings.card_bg }};
+    border: 1px solid {{ section.settings.card_border }};
+    border-radius: {{ section.settings.card_radius }}px;
+    overflow: hidden;
+    transition: transform .32s ease, border-color .28s, box-shadow .28s;
+    text-decoration: none;
+    color: {{ section.settings.card_text }};
+    display: block;
+  }
+  #sole-tabs-{{ section.id }} .stab-card:hover {
+    transform: translateY(-{{ section.settings.hover_lift }}px);
+    border-color: {{ section.settings.accent_color }}55;
+    box-shadow: 0 24px 60px rgba(0,0,0,.35);
+  }
+  #sole-tabs-{{ section.id }} .stab-card-img {
+    height: {{ section.settings.img_height }}px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: {{ section.settings.img_bg }};
+    overflow: hidden;
+    position: relative;
+    transition: transform .38s;
+  }
+  #sole-tabs-{{ section.id }} .stab-card:hover .stab-card-img { transform: scale(1.05); }
+  #sole-tabs-{{ section.id }} .stab-card-img img { width:100%; height:100%; object-fit:cover; display:block; }
+  #sole-tabs-{{ section.id }} .stab-body { padding: {{ section.settings.body_pad }}px; }
+  #sole-tabs-{{ section.id }} .stab-card-tag {
+    font-size: .6rem;
+    letter-spacing: .24em;
+    color: {{ section.settings.accent_color }};
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  #sole-tabs-{{ section.id }} .stab-card-name {
+    font-size: {{ section.settings.name_size }}px;
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: {{ section.settings.card_text }};
+  }
+  #sole-tabs-{{ section.id }} .stab-card-sub {
+    font-size: .78rem;
+    color: {{ section.settings.muted_color }};
+    margin-bottom: 14px;
+  }
+  #sole-tabs-{{ section.id }} .stab-foot {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  #sole-tabs-{{ section.id }} .stab-price {
+    font-size: {{ section.settings.price_size }}px;
+    font-weight: 700;
+    color: {{ section.settings.accent_color }};
+  }
+  #sole-tabs-{{ section.id }} .stab-add-btn {
+    padding: 8px 18px;
+    background: {{ section.settings.btn_bg }};
+    border: 1px solid {{ section.settings.btn_border }};
+    border-radius: 2px;
+    color: {{ section.settings.btn_text }};
+    font-size: .65rem;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background .22s, transform .22s;
+    text-decoration: none;
+    display: inline-block;
+  }
+  #sole-tabs-{{ section.id }} .stab-add-btn:hover {
+    background: {{ section.settings.accent_color }};
+    color: {{ section.settings.bg_color }};
+    transform: scale(1.05);
+  }
+
+  @media screen and (max-width: 749px) {
+    #sole-tabs-{{ section.id }} {
+      padding: {{ section.settings.mobile_padding_top }}px {{ section.settings.mobile_side_padding }}px {{ section.settings.mobile_padding_bottom }}px;
+    }
+    #sole-tabs-{{ section.id }} .stab-panel.active {
+      grid-template-columns: repeat({{ section.settings.mobile_cols }}, 1fr);
+    }
+    #sole-tabs-{{ section.id }} .stab-title { font-size: {{ section.settings.mobile_title_size }}px; }
+    #sole-tabs-{{ section.id }} .stab-top { flex-direction: column; align-items: flex-start; }
+    #sole-tabs-{{ section.id }} .stab-nav { width: 100%; overflow-x: auto; }
+  }
+{%- endstyle -%}
+
+<section id="sole-tabs-{{ section.id }}">
+  <div class="stab-top">
+    <div>
+      {%- if section.settings.label != blank -%}<span class="stab-lbl">{{ section.settings.label }}</span>{%- endif -%}
+      {%- if section.settings.title != blank -%}<h2 class="stab-title">{{ section.settings.title }}</h2>{%- endif -%}
+    </div>
+    <nav class="stab-nav" role="tablist">
+      {%- assign tab_index = 0 -%}
+      {%- for block in section.blocks -%}
+        {%- if block.type == 'tab' -%}
+          <button
+            class="stab-btn{% if tab_index == 0 %} active{% endif %}"
+            role="tab"
+            data-tab="stab-panel-{{ section.id }}-{{ tab_index }}"
+            {{ block.shopify_attributes }}
+          >{{ block.settings.tab_name }}</button>
+          {%- assign tab_index = tab_index | plus: 1 -%}
+        {%- endif -%}
+      {%- endfor -%}
+    </nav>
+  </div>
+
+  {%- assign tab_index = 0 -%}
+  {%- for block in section.blocks -%}
+    {%- if block.type == 'tab' -%}
+      <div
+        id="stab-panel-{{ section.id }}-{{ tab_index }}"
+        class="stab-panel{% if tab_index == 0 %} active{% endif %}"
+        role="tabpanel"
+      >
+        {%- assign product_list = block.settings.collection.products -%}
+        {%- assign limit = block.settings.products_to_show | default: 3 -%}
+        {%- if product_list != blank -%}
+          {%- for product in product_list limit: limit -%}
+            <a href="{{ product.url }}" class="stab-card">
+              <div class="stab-card-img">
+                {%- if product.featured_image != blank -%}
+                  {{ product.featured_image | image_url: width: 600 | image_tag: loading: 'lazy', alt: product.title }}
+                {%- else -%}
+                  {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+                {%- endif -%}
+              </div>
+              <div class="stab-body">
+                <p class="stab-card-tag">{{ block.settings.tab_name }}</p>
+                <p class="stab-card-name">{{ product.title }}</p>
+                <p class="stab-card-sub">{{ product.type }}</p>
+                <div class="stab-foot">
+                  <span class="stab-price">{{ product.price | money }}</span>
+                  <span class="stab-add-btn">Add to Bag</span>
+                </div>
+              </div>
+            </a>
+          {%- endfor -%}
+        {%- else -%}
+          {%- for i in (1..limit) -%}
+            <div class="stab-card">
+              <div class="stab-card-img">{{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}</div>
+              <div class="stab-body">
+                <p class="stab-card-tag">{{ block.settings.tab_name }}</p>
+                <p class="stab-card-name">Sample Product {{ i }}</p>
+                <p class="stab-card-sub">Style · Description</p>
+                <div class="stab-foot">
+                  <span class="stab-price">$199</span>
+                  <span class="stab-add-btn">Add to Bag</span>
+                </div>
+              </div>
+            </div>
+          {%- endfor -%}
+        {%- endif -%}
+      </div>
+      {%- assign tab_index = tab_index | plus: 1 -%}
+    {%- endif -%}
+  {%- endfor -%}
+</section>
+
+<script>
+(function(){
+  var sec = document.getElementById('sole-tabs-{{ section.id }}');
+  if(!sec) return;
+  sec.querySelectorAll('.stab-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      sec.querySelectorAll('.stab-btn').forEach(function(b){ b.classList.remove('active'); });
+      sec.querySelectorAll('.stab-panel').forEach(function(p){ p.classList.remove('active'); });
+      btn.classList.add('active');
+      var panel = document.getElementById(btn.dataset.tab);
+      if(panel) panel.classList.add('active');
+    });
+  });
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Filter Tab Colection",
+  "tag": "section",
+  "class": "section",
+  "disabled_on": { "groups": ["header","footer"] },
+  "settings": [
+    { "type": "header", "content": "Content" },
+    { "type": "text","id": "label","label": "Eyebrow Label","default": "Browse by Type" },
+    { "type": "text","id": "title","label": "Section Title","default": "COLLECTIONS" },
+
+    { "type": "header", "content": "Colors" },
+    { "type": "color","id": "bg_color",          "label": "Background",          "default": "#141b29" },
+    { "type": "color","id": "title_color",        "label": "Title Color",          "default": "#f4f0e8" },
+    { "type": "color","id": "accent_color",       "label": "Accent Color",         "default": "#c8a96e" },
+    { "type": "color","id": "nav_bg",             "label": "Tab Nav Background",   "default": "#ffffff0a" },
+    { "type": "color","id": "nav_border",         "label": "Tab Nav Border",       "default": "#ffffff14" },
+    { "type": "color","id": "tab_inactive_text",  "label": "Tab Inactive Text",    "default": "#737373" },
+    { "type": "color","id": "tab_active_text",    "label": "Tab Active Text",      "default": "#06080d" },
+    { "type": "color","id": "card_bg",            "label": "Card Background",      "default": "#ffffff07" },
+    { "type": "color","id": "card_border",        "label": "Card Border",          "default": "#ffffff12" },
+    { "type": "color","id": "card_text",          "label": "Card Text",            "default": "#f4f0e8" },
+    { "type": "color","id": "muted_color",        "label": "Muted Text Color",     "default": "#737373" },
+    { "type": "color","id": "img_bg",             "label": "Image Background",     "default": "#ffffff08" },
+    { "type": "color","id": "btn_bg",             "label": "Button Background",    "default": "#c8a96e1a" },
+    { "type": "color","id": "btn_border",         "label": "Button Border",        "default": "#c8a96e33" },
+    { "type": "color","id": "btn_text",           "label": "Button Text",          "default": "#c8a96e" },
+
+    { "type": "header", "content": "Typography" },
+    { "type": "range","id": "lbl_size",         "label": "Label Size (px)",        "min":8,"max":16,"step":1,"default":11 },
+    { "type": "range","id": "title_size",        "label": "Desktop Title (px)",     "min":28,"max":100,"step":2,"default":64 },
+    { "type": "range","id": "mobile_title_size", "label": "Mobile Title (px)",      "min":22,"max":72,"step":2,"default":40 },
+    { "type": "range","id": "tab_font_size",     "label": "Tab Button Font (px)",   "min":8,"max":16,"step":1,"default":12 },
+    { "type": "range","id": "name_size",         "label": "Card Name Font (px)",    "min":12,"max":22,"step":1,"default":16 },
+    { "type": "range","id": "price_size",        "label": "Price Font (px)",        "min":14,"max":28,"step":1,"default":22 },
+
+    { "type": "header", "content": "Card & Layout" },
+    { "type": "range","id": "desktop_cols", "label": "Desktop Columns","min":2,"max":4,"step":1,"default":3 },
+    { "type": "range","id": "mobile_cols",  "label": "Mobile Columns", "min":1,"max":3,"step":1,"default":1 },
+    { "type": "range","id": "card_gap",     "label": "Card Gap (px)",  "min":8,"max":40,"step":2,"default":22 },
+    { "type": "range","id": "img_height",   "label": "Image Height (px)","min":100,"max":356,"step":8,"default":196 },
+    { "type": "range","id": "card_radius",  "label": "Card Radius (px)","min":0,"max":20,"step":1,"default":6 },
+    { "type": "range","id": "body_pad",     "label": "Card Body Padding (px)","min":8,"max":40,"step":2,"default":20 },
+    { "type": "range","id": "hover_lift",   "label": "Hover Lift (px)","min":0,"max":20,"step":1,"default":9 },
+    { "type": "range","id": "tab_pad_v",    "label": "Tab Pad Vertical","min":6,"max":20,"step":1,"default":11 },
+    { "type": "range","id": "tab_pad_h",    "label": "Tab Pad Horizontal","min":10,"max":40,"step":2,"default":26 },
+
+    { "type": "header", "content": "Desktop Spacing" },
+    { "type": "range","id": "padding_top",   "label": "Padding Top (px)",  "min":0,"max":140,"step":4,"default":100 },
+    { "type": "range","id": "padding_bottom","label": "Padding Bottom (px)","min":0,"max":140,"step":4,"default":100 },
+    { "type": "range","id": "side_padding",  "label": "Side Padding (px)", "min":0,"max":120,"step":4,"default":80 },
+
+    { "type": "header", "content": "Mobile Spacing" },
+    { "type": "range","id": "mobile_padding_top",   "label": "Mobile Padding Top","min":0,"max":80,"step":4,"default":60 },
+    { "type": "range","id": "mobile_padding_bottom","label": "Mobile Padding Bottom","min":0,"max":80,"step":4,"default":60 },
+    { "type": "range","id": "mobile_side_padding",  "label": "Mobile Side Padding","min":0,"max":40,"step":4,"default":20 }
+  ],
+  "blocks": [
+    {
+      "type": "tab",
+      "name": "Collection Tab",
+      "settings": [
+        { "type": "text",       "id": "tab_name",        "label": "Tab Label",          "default": "Running" },
+        { "type": "collection", "id": "collection",      "label": "Collection" },
+        { "type": "range",      "id": "products_to_show","label": "Products to Show","min":2,"max":6,"step":1,"default":3 }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Filter Tab Colection",
+      "blocks": [
+        {"type":"tab","settings":{"tab_name":"Running","products_to_show":3}},
+        {"type":"tab","settings":{"tab_name":"Lifestyle","products_to_show":3}},
+        {"type":"tab","settings":{"tab_name":"Training","products_to_show":3}},
+        {"type":"tab","settings":{"tab_name":"Trail","products_to_show":3}}
+      ]
+    }
+  ]
+}
+{% endschema %}

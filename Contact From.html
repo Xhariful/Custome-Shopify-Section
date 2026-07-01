@@ -1,0 +1,528 @@
+{%- style -%}
+  .donati-contact-{{ section.id }} {
+    padding-top: {{ section.settings.padding_top_mobile }}px;
+    padding-bottom: {{ section.settings.padding_bottom_mobile }}px;
+    background-color: {{ section.settings.bg_color }};
+  }
+
+  @media screen and (min-width: 1024px) {
+    .donati-contact-{{ section.id }} {
+      padding-top: {{ section.settings.padding_top_desktop }}px;
+      padding-bottom: {{ section.settings.padding_bottom_desktop }}px;
+    }
+  }
+
+  /* Structural Framework Grid */
+  .contact-container {
+    max-width: 1280px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2.5rem; /* gap-10 */
+  }
+  @media (min-width: 1024px) {
+    .contact-container {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  /* Left Side: Info Boxes Layout */
+  .contact-info-col {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  @media (min-width: 1024px) {
+    .contact-info-col {
+      grid-column: span 1;
+    }
+  }
+
+  .info-block {
+    border-radius: 12px; /* rounded-xl */
+    border: 1px solid #D9E2EC; /* Borders token */
+    background-color: #F5F7FA; /* Alternate section background token */
+    padding: 1.5rem; /* p-6 */
+  }
+
+  .info-block__icon-box {
+    display: flex;
+    height: 2.5rem; /* h-10 */
+    width: 2.5rem;  /* w-10 */
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px; /* rounded-lg */
+    margin-bottom: 0.75rem; /* mb-3 */
+    background-color: #184E77; /* Primary brand blue */
+    color: #ffffff;
+  }
+  .info-block__icon-box svg {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  .info-block__title {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600; /* H3 weight token */
+    color: #1F2933; /* Primary text */
+    margin: 0 0 0.5rem 0;
+    font-size: 16px;
+    line-height: 1.4;
+  }
+
+  .info-block__line {
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    color: #5B6770; /* Secondary text */
+    font-size: 14px; /* Small text token */
+    line-height: 1.5;
+  }
+
+  /* Right Side: Form Block Card Layout */
+  .contact-form-col {
+    width: 100%;
+  }
+  @media (min-width: 1024px) {
+    .contact-form-col {
+      grid-column: span 2;
+    }
+  }
+
+  .form-card {
+    border-radius: 16px; /* rounded-2xl */
+    border: 1px solid #D9E2EC; /* Borders token */
+    background-color: #ffffff;
+    padding: 2rem; /* p-8 */
+  }
+  @media (min-width: 1024px) {
+    .form-card {
+      padding: 2.5rem; /* lg:p-10 */
+    }
+  }
+
+  .form-card__title {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700; /* H1/H2 weight token */
+    color: #1F2933;
+    margin: 0 0 0.5rem 0;
+    font-size: 28px;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+
+  .form-card__subtitle {
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    color: #5B6770; /* Secondary text */
+    font-size: 16px; /* Body text token */
+    line-height: 1.5;
+    margin: 0 0 2rem 0;
+  }
+
+  /* Status Message Handlers */
+  .form-status--success {
+    border-radius: 8px;
+    padding: 1.5rem;
+    text-align: center;
+    background-color: #D6EAF5; /* Secondary light blue */
+    color: #184E77; /* Primary brand blue */
+    font-family: 'Inter', sans-serif;
+    margin-bottom: 2rem;
+  }
+  .form-status__title {
+    font-weight: 600;
+    margin: 0 0 0.25rem 0;
+    font-size: 16px;
+  }
+  .form-status__desc {
+    font-size: 14px;
+    margin: 0;
+  }
+
+  .form-status--errors {
+    border-radius: 8px;
+    padding: 1rem 1.5rem;
+    background-color: #fff5f5;
+    color: #cc0000;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    margin-bottom: 2rem;
+    border: 1px solid #ffcccc;
+  }
+
+  /* Form Elements Core Grid Setup */
+  .contact-native-form {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem; /* gap-5 */
+  }
+  @media (min-width: 640px) {
+    .contact-native-form {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .form-field-wrapper {
+    display: flex;
+    flex-direction: column;
+  }
+  @media (min-width: 640px) {
+    .form-field-wrapper.span-2 {
+      grid-column: span 2;
+    }
+  }
+
+  .form-label {
+    display: block;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500; /* Body text weight token */
+    font-size: 14px; /* Small text hierarchy */
+    color: #1F2933; /* Primary text */
+    margin-bottom: 0.375rem; /* mb-1.5 */
+  }
+
+  .form-input, .form-select, .form-textarea {
+    width: 100%;
+    border-radius: 8px; /* Recommended border radius token */
+    border: 1px solid #D9E2EC; /* Borders design token */
+    padding: 12px 16px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    color: #1F2933;
+    background-color: #ffffff;
+    transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  .form-select {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%235B6770' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'></polyline></svg>");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px;
+    padding-right: 40px;
+  }
+
+  .form-input:focus, .form-select:focus, .form-textarea:focus {
+    outline: none;
+    border-color: #184E77;
+    box-shadow: 0 0 0 3px rgba(24, 78, 119, 0.15);
+  }
+
+  .form-textarea {
+    resize: none;
+  }
+
+  .form-privacy-wrapper {
+    display: flex;
+    align-items: start;
+    gap: 0.5rem;
+  }
+
+  .form-privacy-checkbox {
+    margin-top: 0.25rem;
+    accent-color: #184E77;
+  }
+
+  .form-privacy-label {
+    font-family: 'Inter', sans-serif;
+    font-size: 14px; /* Small Text token scale */
+    color: #5B6770; /* Secondary text token */
+    line-height: 1.4;
+  }
+  .form-privacy-label a {
+    color: #184E77;
+    text-decoration: underline;
+  }
+
+  /* Submit Action CTA Button styling overrides */
+  .form-submit-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: 8px; /* Recommended token */
+    border: none;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+    background-color: #184E77; /* Primary CTA */
+    color: #ffffff;
+    padding: 14px 28px; /* Recommended padding token */
+    cursor: pointer;
+    transition: background-color 0.25s ease-in-out;
+    width: auto;
+  }
+  .form-submit-btn:hover {
+    background-color: #133B5C; /* Primary CTA Hover token */
+  }
+
+  .form-submit-btn svg {
+    width: 1rem;
+    height: 1rem;
+  }
+{%- endstyle -%}
+
+<section class="donati-contact-{{ section.id }}">
+  <div class="contact-container">
+    
+    <div class="contact-info-col">
+      {%- for block in section.blocks -%}
+        {%- case block.type -%}
+          {%- when 'info_box' -%}
+            <div class="info-block" {{ block.shopify_attributes }}>
+              <div class="info-block__icon-box">
+                {%- case block.settings.icon -%}
+                  {%- when 'map-pin' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                  {%- when 'phone' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                  {%- when 'mail' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                  {%- when 'clock' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                {%- endcase -%}
+              </div>
+              <div class="info-block__title">{{ block.settings.title }}</div>
+              {%- if block.settings.line_1 != blank -%}<div class="info-block__line">{{ block.settings.line_1 }}</div>{%- endif -%}
+              {%- if block.settings.line_2 != blank -%}<div class="info-block__line">{{ block.settings.line_2 }}</div>{%- endif -%}
+            </div>
+        {%- endcase -%}
+      {%- endfor -%}
+    </div>
+
+    <div class="contact-form-col">
+      <div class="form-card">
+        <h2 class="form-card__title">{{ section.settings.form_heading }}</h2>
+        <p class="form-card__subtitle">{{ section.settings.form_subheading }}</p>
+
+        {%- form 'contact', class: 'contact-native-form' -%}
+          
+          {%- if form.posted_successfully? -%}
+            <div class="form-status--success sm:col-span-2">
+              <p class="form-status__title">Message sent successfully!</p>
+              <p class="form-status__desc">Thank you for contacting us. We will get back to you within 24 hours.</p>
+            </div>
+          {%- endif -%}
+
+          {%- if form.errors -%}
+            <div class="form-status--errors sm:col-span-2">
+              {{ form.errors | default_errors }}
+            </div>
+          {%- endif -%}
+
+          <div class="form-field-wrapper">
+            <label class="form-label" for="ContactForm-FirstName-{{ section.id }}">First Name <span aria-hidden="true">*</span></label>
+            <input 
+              type="text" 
+              id="ContactForm-FirstName-{{ section.id }}" 
+              name="contact[first_name]" 
+              class="form-input" 
+              required 
+              placeholder="Enter your first name"
+            >
+          </div>
+
+          <div class="form-field-wrapper">
+            <label class="form-label" for="ContactForm-LastName-{{ section.id }}">Last Name <span aria-hidden="true">*</span></label>
+            <input 
+              type="text" 
+              id="ContactForm-LastName-{{ section.id }}" 
+              name="contact[last_name]" 
+              class="form-input" 
+              required 
+              placeholder="Enter your last name"
+            >
+          </div>
+
+          <div class="form-field-wrapper">
+            <label class="form-label" for="ContactForm-Email-{{ section.id }}">Email Address <span aria-hidden="true">*</span></label>
+            <input 
+              type="email" 
+              id="ContactForm-Email-{{ section.id }}" 
+              name="contact[email]" 
+              class="form-input" 
+              spellcheck="false" 
+              autocapitalize="off" 
+              required 
+              placeholder="name@company.com"
+            >
+          </div>
+
+          <div class="form-field-wrapper">
+            <label class="form-label" for="ContactForm-Phone-{{ section.id }}">Phone Number</label>
+            <input 
+              type="tel" 
+              id="ContactForm-Phone-{{ section.id }}" 
+              name="contact[phone]" 
+              class="form-input" 
+              placeholder="+1 (000) 000-0000"
+            >
+          </div>
+
+          <div class="form-field-wrapper span-2">
+            <label class="form-label" for="ContactForm-Message-{{ section.id }}">Message <span aria-hidden="true">*</span></label>
+            <textarea 
+              rows="5" 
+              id="ContactForm-Message-{{ section.id }}" 
+              name="contact[body]" 
+              class="form-textarea" 
+              required 
+              placeholder="Please describe your project in detail..."
+            ></textarea>
+          </div>
+
+          <div class="form-field-wrapper span-2 form-privacy-wrapper">
+            <input type="checkbox" required class="form-privacy-checkbox" id="ContactForm-Privacy-{{ section.id }}" />
+            <label for="ContactForm-Privacy-{{ section.id }}" class="form-privacy-label">
+              I accept the processing of personal data according to the <a href="{{ section.settings.privacy_url | default: '#' }}">Privacy Policy</a>.
+            </label>
+          </div>
+
+          <div class="form-field-wrapper span-2">
+            <div>
+              <button type="submit" class="form-submit-btn">
+                Submit Request
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+              </button>
+            </div>
+          </div>
+
+        {%- endform -%}
+      </div>
+    </div>
+
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Contact & Form",
+  "settings": [
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Section Background Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Form Text Settings"
+    },
+    {
+      "type": "text",
+      "id": "form_heading",
+      "label": "Form Card Heading",
+      "default": "Request a Quote"
+    },
+    {
+      "type": "textarea",
+      "id": "form_subheading",
+      "label": "Form Card Subheading Description",
+      "default": "Fill out the form below and we will get back to you within 24 hours."
+    },
+    {
+      "type": "url",
+      "id": "privacy_url",
+      "label": "Privacy Policy Link URL"
+    },
+    {
+      "type": "header",
+      "content": "Desktop Layout Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_desktop",
+      "min": 40,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "label": "Top Padding",
+      "default": 96
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_desktop",
+      "min": 40,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom Padding",
+      "default": 96
+    },
+    {
+      "type": "header",
+      "content": "Mobile Layout Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "min": 20,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Top Padding (Mobile)",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "min": 20,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom Padding (Mobile)",
+      "default": 64
+    }
+  ],
+  "blocks": [
+    {
+      "type": "info_box",
+      "name": "Contact Information Block",
+      "limit": 4,
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Vector Icon Style",
+          "options": [
+            { "value": "map-pin", "label": "Map Pin / Headquarters" },
+            { "value": "phone", "label": "Phone / Telephone" },
+            { "value": "mail", "label": "Mail / Email" },
+            { "value": "clock", "label": "Clock / Hours" }
+          ],
+          "default": "map-pin"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Block Title Label",
+          "default": "Headquarters"
+        },
+        {
+          "type": "text",
+          "id": "line_1",
+          "label": "Information Line 1",
+          "default": "12 Industrial Road"
+        },
+        {
+          "type": "text",
+          "id": "line_2",
+          "label": "Information Line 2",
+          "default": "Modena, Italy"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Contact & Form",
+      "blocks": [
+        { "type": "info_box", "settings": { "icon": "map-pin", "title": "Headquarters", "line_1": "12 Industrial Road", "line_2": "Modena, Italy" } },
+        { "type": "info_box", "settings": { "icon": "phone", "title": "Phone", "line_1": "+39 059 000 0000", "line_2": "Mon–Fri 8:00 AM–6:00 PM" } },
+        { "type": "info_box", "settings": { "icon": "mail", "title": "Email", "line_1": "info@donati-steel.com", "line_2": "quotes@donati-steel.com" } },
+        { "type": "info_box", "settings": { "icon": "clock", "title": "Working Hours", "line_1": "Mon–Fri 8:00 AM–6:00 PM", "line_2": "Saturday by appointment" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

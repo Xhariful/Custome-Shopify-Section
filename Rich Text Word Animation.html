@@ -1,0 +1,322 @@
+{% comment %} SOLE — Particle Word Rotator {% endcomment %}
+<style>
+  #sole-twr-{{ section.id }} {
+    background: {{ section.settings.bg_color }};
+    padding: {{ section.settings.pad_top }}px {{ section.settings.side_pad }}px {{ section.settings.pad_bottom }}px;
+    text-align: {{ section.settings.text_align }};
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    min-height: {{ section.settings.min_height }}px;
+    justify-content: {% if section.settings.text_align == 'center' %}center{% elsif section.settings.text_align == 'right' %}flex-end{% else %}flex-start{% endif %};
+  }
+  #sole-twr-{{ section.id }} .twr-inner { position: relative; z-index: 2; }
+  #sole-twr-{{ section.id }} .twr-headline {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.25em;
+    justify-content: {% if section.settings.text_align == 'center' %}center{% elsif section.settings.text_align == 'right' %}flex-end{% else %}flex-start{% endif %};
+  }
+  #sole-twr-{{ section.id }} .twr-static {
+    font-family: {{ section.settings.font_family }};
+    font-size: {{ section.settings.headline_size }}px;
+    font-weight: {{ section.settings.font_weight }};
+    color: {{ section.settings.static_color }};
+    line-height: 1.05;
+    letter-spacing: {{ section.settings.letter_spacing }}px;
+    text-transform: {{ section.settings.text_transform }};
+    display: block;
+  }
+  #sole-twr-{{ section.id }} canvas#twr-canvas-{{ section.id }} {
+    display: block;
+    vertical-align: middle;
+  }
+  #sole-twr-{{ section.id }} .twr-sub {
+    font-family: {{ section.settings.sub_font }};
+    font-size: {{ section.settings.sub_size }}px;
+    color: {{ section.settings.sub_color }};
+    margin-top: {{ section.settings.sub_gap }}px;
+    line-height: 1.65;
+    max-width: 580px;
+    {% if section.settings.text_align == 'center' %}margin-left: auto; margin-right: auto;{% endif %}
+  }
+  #sole-twr-{{ section.id }} .twr-btn {
+    display: inline-block;
+    margin-top: {{ section.settings.btn_gap }}px;
+    padding: {{ section.settings.btn_pad_v }}px {{ section.settings.btn_pad_h }}px;
+    background: {{ section.settings.btn_bg }};
+    color: {{ section.settings.btn_color }};
+    font-family: {{ section.settings.sub_font }};
+    font-size: {{ section.settings.btn_size }}px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: 2px solid {{ section.settings.btn_border }};
+    border-radius: {{ section.settings.btn_radius }}px;
+    transition: background .25s, color .25s, transform .2s;
+  }
+  #sole-twr-{{ section.id }} .twr-btn:hover {
+    background: {{ section.settings.btn_hover_bg }};
+    color: {{ section.settings.btn_hover_color }};
+    transform: translateY(-3px);
+  }
+  #sole-twr-{{ section.id }} .twr-ghost {
+    position: absolute;
+    bottom: -0.1em;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: {{ section.settings.font_family }};
+    font-size: clamp(80px, 18vw, 280px);
+    font-weight: 900;
+    color: transparent;
+    -webkit-text-stroke: 1px {{ section.settings.ghost_color }};
+    opacity: {{ section.settings.ghost_opacity | divided_by: 100.0 }};
+    white-space: nowrap;
+    pointer-events: none;
+    user-select: none;
+    z-index: 1;
+    text-transform: uppercase;
+  }
+</style>
+
+<section id="sole-twr-{{ section.id }}">
+  {% if section.settings.ghost_word != blank %}
+    <div class="twr-ghost">{{ section.settings.ghost_word }}</div>
+  {% endif %}
+  <div class="twr-inner">
+    {% if section.settings.pre_text != blank %}
+      <span class="twr-static" style="font-size:{{ section.settings.pre_size }}px; margin-bottom:8px; display:block;">{{ section.settings.pre_text }}</span>
+    {% endif %}
+    <div class="twr-headline">
+      {% if section.settings.static_before != blank %}
+        <span class="twr-static">{{ section.settings.static_before }}</span>
+      {% endif %}
+      <canvas id="twr-canvas-{{ section.id }}"></canvas>
+      {% if section.settings.static_after != blank %}
+        <span class="twr-static">{{ section.settings.static_after }}</span>
+      {% endif %}
+    </div>
+    {% if section.settings.sub_text != blank %}
+      <p class="twr-sub">{{ section.settings.sub_text }}</p>
+    {% endif %}
+    {% if section.settings.btn_label != blank %}
+      <a class="twr-btn" href="{{ section.settings.btn_url }}">{{ section.settings.btn_label }}</a>
+    {% endif %}
+  </div>
+</section>
+
+<script>
+(function(){
+  var canvas = document.getElementById('twr-canvas-{{ section.id }}');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var dpr = window.devicePixelRatio || 1;
+
+  var words = '{{ section.settings.rotating_words }}'.split(',').map(function(w){ return w.trim(); }).filter(Boolean);
+  if (!words.length) words = ['WORD'];
+
+  var FONT_SIZE = {{ section.settings.headline_size }};
+  var FONT_WEIGHT = '{{ section.settings.font_weight }}';
+  var FONT_FAMILY = '{{ section.settings.font_family }}';
+  var WORD_COLOR = '{{ section.settings.rotating_color }}';
+  var PARTICLE_COLOR = '{{ section.settings.particle_color }}';
+  var SWAP_MS = {{ section.settings.swap_interval }};
+  var TRANSFORM = '{{ section.settings.text_transform }}';
+
+  var idx = 0, particles = [], phase = 'idle', timer = null, raf = null;
+
+  function tx(str) {
+    if (TRANSFORM === 'uppercase') return str.toUpperCase();
+    if (TRANSFORM === 'lowercase') return str.toLowerCase();
+    if (TRANSFORM === 'capitalize') return str[0].toUpperCase() + str.slice(1);
+    return str;
+  }
+
+  function font() { return FONT_WEIGHT + ' ' + FONT_SIZE + 'px ' + FONT_FAMILY; }
+
+  function resize(word) {
+    ctx.font = font();
+    var m = ctx.measureText(tx(word));
+    var w = Math.ceil(m.width) + 24;
+    var h = Math.ceil(FONT_SIZE * 1.3) + 8;
+    canvas.width = w * dpr;
+    canvas.height = h * dpr;
+    canvas.style.width = w + 'px';
+    canvas.style.height = h + 'px';
+    ctx.setTransform(1,0,0,1,0,0);
+    ctx.scale(dpr, dpr);
+  }
+
+  function sample(word) {
+    var w = canvas.width / dpr, h = canvas.height / dpr;
+    var off = document.createElement('canvas');
+    off.width = canvas.width; off.height = canvas.height;
+    var oc = off.getContext('2d');
+    oc.scale(dpr, dpr);
+    oc.font = font();
+    oc.fillStyle = '#fff';
+    oc.textBaseline = 'middle';
+    oc.fillText(tx(word), 12, h / 2);
+    var d = oc.getImageData(0, 0, off.width, off.height).data;
+    var pts = [], step = 4;
+    for (var y = 0; y < off.height; y += step)
+      for (var x = 0; x < off.width; x += step)
+        if (d[(y * off.width + x) * 4 + 3] > 100)
+          pts.push({ x: x / dpr, y: y / dpr });
+    return pts;
+  }
+
+  function draw() {
+    var w = canvas.width/dpr, h = canvas.height/dpr;
+    ctx.clearRect(0,0,w,h);
+    for (var i = 0; i < particles.length; i++) {
+      var p = particles[i];
+      ctx.globalAlpha = Math.max(0, p.alpha);
+      ctx.fillStyle = phase === 'explode' ? PARTICLE_COLOR : WORD_COLOR;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI*2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  function explode() {
+    phase = 'explode';
+    if (raf) cancelAnimationFrame(raf);
+    particles.forEach(function(p){
+      p.vx = (Math.random()-.5)*22;
+      p.vy = (Math.random()-.5)*22;
+    });
+    var t = 0;
+    (function step(){
+      t++;
+      var alive = false;
+      particles.forEach(function(p){
+        p.x += p.vx; p.y += p.vy;
+        p.vx *= 0.92; p.vy *= 0.92;
+        p.alpha -= 0.028;
+        if (p.alpha > 0) alive = true;
+      });
+      draw();
+      if (alive && t < 70) raf = requestAnimationFrame(step);
+      else nextWord();
+    })();
+  }
+
+  function nextWord() {
+    idx = (idx + 1) % words.length;
+    var word = words[idx];
+    resize(word);
+    var pts = sample(word);
+    var w = canvas.width/dpr, h = canvas.height/dpr;
+    particles = pts.map(function(p){
+      return {
+        x: w/2 + (Math.random()-.5)*w*3,
+        y: h/2 + (Math.random()-.5)*h*3,
+        tx: p.x, ty: p.y,
+        vx:0, vy:0, alpha:0,
+        size: Math.random()*2.5+1
+      };
+    });
+    assemble();
+  }
+
+  function assemble() {
+    phase = 'assemble';
+    if (raf) cancelAnimationFrame(raf);
+    var t = 0;
+    (function step(){
+      t++;
+      var done = true;
+      particles.forEach(function(p){
+        p.x += (p.tx-p.x)*0.11;
+        p.y += (p.ty-p.y)*0.11;
+        p.alpha = Math.min(1, p.alpha+0.045);
+        if (Math.abs(p.tx-p.x)>0.8||Math.abs(p.ty-p.y)>0.8) done=false;
+      });
+      draw();
+      if (!done && t < 90) raf = requestAnimationFrame(step);
+      else { phase='idle'; timer = setTimeout(explode, SWAP_MS); }
+    })();
+  }
+
+  function init() {
+    var word = words[0];
+    resize(word);
+    var pts = sample(word);
+    var w = canvas.width/dpr, h = canvas.height/dpr;
+    particles = pts.map(function(p){
+      return { x:p.x+(Math.random()-.5)*100, y:p.y+(Math.random()-.5)*100, tx:p.x, ty:p.y, vx:0, vy:0, alpha:0, size:Math.random()*2.5+1 };
+    });
+    assemble();
+  }
+
+  document.fonts.ready.then(init);
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Rich Text Word Animation",
+  "tag": "section",
+  "settings": [
+    { "type": "header", "content": "Headline" },
+    { "type": "text", "id": "pre_text", "label": "Small Label Above" },
+    { "type": "range", "id": "pre_size", "label": "Label Size (px)", "min": 10, "max": 32, "step": 1, "default": 14 },
+    { "type": "text", "id": "static_before", "label": "Static Text Before", "default": "The Last Shoe You'll" },
+    { "type": "text", "id": "rotating_words", "label": "Rotating Words (comma separated)", "default": "BUY,NEED,WEAR,LOVE,OWN" },
+    { "type": "text", "id": "static_after", "label": "Static Text After" },
+    { "type": "range", "id": "swap_interval", "label": "Word Swap Speed (ms)", "min": 1000, "max": 9000, "step": 500, "default": 2500 },
+
+    { "type": "header", "content": "Typography" },
+    { "type": "text", "id": "font_family", "label": "Font Family", "default": "Georgia, serif" },
+    { "type": "range", "id": "headline_size", "label": "Headline Size (px)", "min": 28, "max": 120, "step": 2, "default": 72 },
+    { "type": "select", "id": "font_weight", "label": "Weight", "options": [{"value":"400","label":"Regular"},{"value":"600","label":"Semi Bold"},{"value":"700","label":"Bold"},{"value":"800","label":"Extra Bold"},{"value":"900","label":"Black"}], "default": "800" },
+    { "type": "select", "id": "text_transform", "label": "Transform", "options": [{"value":"none","label":"None"},{"value":"uppercase","label":"Uppercase"},{"value":"lowercase","label":"Lowercase"},{"value":"capitalize","label":"Capitalize"}], "default": "uppercase" },
+    { "type": "range", "id": "letter_spacing", "label": "Letter Spacing (px)", "min": -5, "max": 20, "step": 1, "default": -2 },
+
+    { "type": "header", "content": "Colors" },
+    { "type": "color", "id": "bg_color", "label": "Background", "default": "#0a0a0a" },
+    { "type": "color", "id": "static_color", "label": "Static Text", "default": "#ffffff" },
+    { "type": "color", "id": "rotating_color", "label": "Rotating Word", "default": "#ff4500" },
+    { "type": "color", "id": "particle_color", "label": "Explode Particles", "default": "#ff4500" },
+
+    { "type": "header", "content": "Ghost Watermark" },
+    { "type": "text", "id": "ghost_word", "label": "Ghost Word (background)" },
+    { "type": "color", "id": "ghost_color", "label": "Ghost Color", "default": "#ffffff" },
+    { "type": "range", "id": "ghost_opacity", "label": "Ghost Opacity (%)", "min": 1, "max": 15, "step": 1, "default": 5 },
+
+    { "type": "header", "content": "Subtitle" },
+    { "type": "text", "id": "sub_text", "label": "Subtitle Text" },
+    { "type": "text", "id": "sub_font", "label": "Subtitle Font", "default": "Arial, sans-serif" },
+    { "type": "range", "id": "sub_size", "label": "Subtitle Size (px)", "min": 12, "max": 28, "step": 1, "default": 17 },
+    { "type": "color", "id": "sub_color", "label": "Subtitle Color", "default": "#aaaaaa" },
+    { "type": "range", "id": "sub_gap", "label": "Gap Above Subtitle (px)", "min": 8, "max": 60, "step": 2, "default": 24 },
+
+    { "type": "header", "content": "Button" },
+    { "type": "text", "id": "btn_label", "label": "Button Label" },
+    { "type": "url", "id": "btn_url", "label": "Button URL" },
+    { "type": "range", "id": "btn_size", "label": "Button Font Size (px)", "min": 10, "max": 22, "step": 1, "default": 13 },
+    { "type": "range", "id": "btn_pad_v", "label": "Button Padding V (px)", "min": 8, "max": 32, "step": 2, "default": 16 },
+    { "type": "range", "id": "btn_pad_h", "label": "Button Padding H (px)", "min": 16, "max": 80, "step": 2, "default": 40 },
+    { "type": "range", "id": "btn_radius", "label": "Button Radius (px)", "min": 0, "max": 50, "step": 1, "default": 0 },
+    { "type": "range", "id": "btn_gap", "label": "Gap Above Button (px)", "min": 8, "max": 60, "step": 2, "default": 32 },
+    { "type": "color", "id": "btn_bg", "label": "Button BG", "default": "#ff4500" },
+    { "type": "color", "id": "btn_color", "label": "Button Text", "default": "#ffffff" },
+    { "type": "color", "id": "btn_border", "label": "Button Border", "default": "#ff4500" },
+    { "type": "color", "id": "btn_hover_bg", "label": "Button Hover BG", "default": "#ffffff" },
+    { "type": "color", "id": "btn_hover_color", "label": "Button Hover Text", "default": "#0a0a0a" },
+
+    { "type": "header", "content": "Layout" },
+    { "type": "select", "id": "text_align", "label": "Alignment", "options": [{"value":"left","label":"Left"},{"value":"center","label":"Center"},{"value":"right","label":"Right"}], "default": "center" },
+    { "type": "range", "id": "min_height", "label": "Min Height (px)", "min": 200, "max": 900, "step": 10, "default": 500 },
+    { "type": "range", "id": "pad_top", "label": "Padding Top (px)", "min": 20, "max": 200, "step": 4, "default": 80 },
+    { "type": "range", "id": "pad_bottom", "label": "Padding Bottom (px)", "min": 20, "max": 200, "step": 4, "default": 80 },
+    { "type": "range", "id": "side_pad", "label": "Side Padding (px)", "min": 10, "max": 120, "step": 2, "default": 40 }
+  ],
+  "presets": [{ "name": "Rich Text Word Animation" }]
+}
+{% endschema %}
