@@ -1,0 +1,369 @@
+{%- style -%}
+  #sole-slide-{{ section.id }} {
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+    background: {{ section.settings.bg_color }};
+  }
+  #sole-slide-{{ section.id }} .ss-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding: 0 {{ section.settings.side_padding }}px;
+  }
+  #sole-slide-{{ section.id }} .ss-lbl {
+    display: block;
+    font-size: {{ section.settings.lbl_size }}px;
+    letter-spacing: .42em;
+    color: {{ section.settings.accent_color }};
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  #sole-slide-{{ section.id }} .ss-title {
+    font-size: {{ section.settings.title_size }}px;
+    font-weight: 700;
+    color: {{ section.settings.title_color }};
+    line-height: .94;
+  }
+  #sole-slide-{{ section.id }} .ss-nav { display: flex; gap: 11px; }
+  #sole-slide-{{ section.id }} .ss-btn {
+    width: 45px; height: 45px;
+    border-radius: 50%;
+    border: 1px solid {{ section.settings.nav_border }};
+    color: {{ section.settings.nav_color }};
+    font-size: 1.1rem;
+    background: transparent;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: background .25s, border-color .25s, color .25s;
+  }
+  #sole-slide-{{ section.id }} .ss-btn:hover {
+    background: {{ section.settings.accent_color }};
+    border-color: {{ section.settings.accent_color }};
+    color: {{ section.settings.bg_color }};
+  }
+  #sole-slide-{{ section.id }} .ss-wrap { 
+    overflow: hidden; 
+    padding: {{ section.settings.side_padding }}px {{ section.settings.side_padding }}px 16px;
+  }
+  #sole-slide-{{ section.id }} .ss-track {
+    display: flex;
+    gap: {{ section.settings.card_gap }}px;
+    transition: transform .65s cubic-bezier(.25,.46,.45,.94);
+    will-change: transform;
+  }
+  #sole-slide-{{ section.id }} .ss-card {
+    /* ডেক্সটপে ৪টি কলাম ফিক্সড করার ক্যালকুলেশন (৩টি গ্যাপ বাদ দিয়ে ৪ ভাগে ভাগ) */
+    width: calc((100% - (3 * {{ section.settings.card_gap }}px)) / 4);
+    min-width: calc((100% - (3 * {{ section.settings.card_gap }}px)) / 4);
+    background: {{ section.settings.card_bg }};
+    border-radius: {{ section.settings.card_radius }}px;
+    overflow: hidden;
+    flex-shrink: 0;
+    transition: transform .4s ease, box-shadow .4s;
+    text-decoration: none;
+    color: {{ section.settings.card_text }};
+    display: flex;
+    flex-direction: column;
+  }
+  #sole-slide-{{ section.id }} .ss-card:hover {
+    transform: translateY(-12px);
+    box-shadow: 0 10px 20px rgba(0,0,0,.5);
+  }
+  #sole-slide-{{ section.id }} .ss-card-img {
+    position: relative;
+    overflow: hidden;
+    background: {{ section.settings.img_bg }};
+    width: 100%;
+    
+    {%- if section.settings.img_ratio == 'square' -%}
+      aspect-ratio: 1 / 1;
+    {%- elsif section.settings.img_ratio == 'portrait' -%}
+      aspect-ratio: 3 / 4;
+    {%- elsif section.settings.img_ratio == 'landscape' -%}
+      aspect-ratio: 4 / 3;
+    {%- else -%}
+      height: {{ section.settings.img_height }}px;
+    {%- endif -%}
+  }
+  #sole-slide-{{ section.id }} .ss-card-img img {
+    width: 100%; height: 100%;
+    object-fit: {{ section.settings.img_fit }};
+    display: block;
+  }
+  #sole-slide-{{ section.id }} .ss-pill {
+    position: absolute;
+    top: 12px; right: 12px;
+    background: {{ section.settings.accent_color }};
+    color: {{ section.settings.bg_color }};
+    font-size: .58rem;
+    font-weight: 700;
+    letter-spacing: .18em;
+    padding: 5px 10px;
+    border-radius: 2px;
+    text-transform: uppercase;
+    z-index: 1;
+  }
+  #sole-slide-{{ section.id }} .ss-body { 
+    padding: {{ section.settings.card_pad }}px; 
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+  }
+  #sole-slide-{{ section.id }} .ss-brand {
+    font-size: .62rem;
+    letter-spacing: .26em;
+    color: {{ section.settings.accent_color }};
+    text-transform: uppercase;
+    margin-bottom: 5px;
+  }
+  #sole-slide-{{ section.id }} .ss-name {
+    font-size: {{ section.settings.name_size }}px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: {{ section.settings.card_text }};
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.3;
+    min-height: 2.6em;
+  }
+  #sole-slide-{{ section.id }} .ss-foot {
+    display: flex; 
+    flex-direction: column;
+    gap: 14px;
+    margin-top: auto;
+  }
+  #sole-slide-{{ section.id }} .ss-price-wrapper {
+    display: flex;
+    align-items: center;
+  }
+  #sole-slide-{{ section.id }} .ss-price {
+    font-size: {{ section.settings.price_size }}px;
+    font-weight: 700;
+    color: {{ section.settings.card_text }};
+  }
+  #sole-slide-{{ section.id }} .ss-compare {
+    font-size: .78rem;
+    color: {{ section.settings.muted_color }};
+    text-decoration: line-through;
+    margin-left: 8px;
+  }
+  #sole-slide-{{ section.id }} .ss-add-btn {
+    width: 100%;
+    padding: 10px 16px;
+    border: 1px solid {{ section.settings.nav_border }};
+    border-radius: 4px;
+    background: transparent;
+    color: {{ section.settings.card_text }};
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-align: center;
+    cursor: pointer;
+    transition: background 0.3s, border-color 0.3s, color 0.3s;
+  }
+  #sole-slide-{{ section.id }} .ss-card:hover .ss-add-btn {
+    background: {{ section.settings.accent_color }};
+    border-color: {{ section.settings.accent_color }};
+    color: {{ section.settings.bg_color }};
+  }
+
+  @media screen and (max-width: 749px) {
+    #sole-slide-{{ section.id }} {
+      padding-top: {{ section.settings.mobile_padding_top }}px;
+      padding-bottom: {{ section.settings.mobile_padding_bottom }}px;
+    }
+    #sole-slide-{{ section.id }} .ss-head { padding: 0 20px; margin-bottom: 32px; }
+    #sole-slide-{{ section.id }} .ss-wrap { padding: 24px 20px 16px; }
+    #sole-slide-{{ section.id }} .ss-card { 
+      /* মোবাইলে ১টি পুরো কার্ড এবং ২য় কার্ডের একটু অংশ (Peek view) দেখানোর ক্যালকুলেশন */
+      width: calc(100% - 40px);
+      min-width: calc(100% - 40px);
+    }
+    #sole-slide-{{ section.id }} .ss-title { font-size: {{ section.settings.mobile_title_size }}px; }
+  }
+{%- endstyle -%}
+
+<section id="sole-slide-{{ section.id }}">
+  <div class="ss-head">
+    <div>
+      {%- if section.settings.label != blank -%}<span class="ss-lbl">{{ section.settings.label }}</span>{%- endif -%}
+      {%- if section.settings.title != blank -%}<h2 class="ss-title">{{ section.settings.title }}</h2>{%- endif -%}
+    </div>
+    <div class="ss-nav">
+      <button class="ss-btn" id="ssPrev-{{ section.id }}" aria-label="Previous">&#8592;</button>
+      <button class="ss-btn" id="ssNext-{{ section.id }}" aria-label="Next">&#8594;</button>
+    </div>
+  </div>
+
+  <div class="ss-wrap">
+    <div class="ss-track" id="ssTrack-{{ section.id }}">
+      {%- assign selected_collection = section.settings.collection -%}
+      {%- assign product_limit = section.settings.products_to_show -%}
+
+      {%- if selected_collection != blank and selected_collection.all_products_count > 0 -%}
+        {%- for product in selected_collection.products limit: product_limit -%}
+          <a href="{{ product.url }}" class="ss-card">
+            <div class="ss-card-img">
+              {%- if product.featured_image != blank -%}
+                {{ product.featured_image | image_url: width: 700 | image_tag: loading: 'lazy', alt: product.title }}
+              {%- else -%}
+                {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+              {%- endif -%}
+
+              {%- if product.available == false -%}
+                <span class="ss-pill" style="background: #555;">Sold Out</span>
+              {%- elsif product.compare_at_price > product.price -%}
+                <span class="ss-pill">Sale</span>
+              {%- endif -%}
+            </div>
+            <div class="ss-body">
+              <p class="ss-brand">{{ product.vendor | default: 'SOLE Labs' }}</p>
+              <p class="ss-name">{{ product.title }}</p>
+              <div class="ss-foot">
+                <div class="ss-price-wrapper">
+                  <span class="ss-price">{{ product.price | money }}</span>
+                  {%- if product.compare_at_price > product.price -%}
+                    <s class="ss-compare">{{ product.compare_at_price | money }}</s>
+                  {%- endif -%}
+                </div>
+                <div class="ss-add-btn">Add to Cart</div>
+              </div>
+            </div>
+          </a>
+        {%- endfor -%}
+      {%- else -%}
+        {%- for i in (1..product_limit) -%}
+          <div class="ss-card">
+            <div class="ss-card-img">
+              {{ 'product-' | append: i | placeholder_svg_tag: 'placeholder-svg' }}
+              <span class="ss-pill">NEW</span>
+            </div>
+            <div class="ss-body">
+              <p class="ss-brand">SOLE Labs</p>
+              <p class="ss-name">Sample Product Title That Might Stretch to Two Lines {{ i }}</p>
+              <div class="ss-foot">
+                <div class="ss-price-wrapper">
+                  <span class="ss-price">$199.00</span>
+                </div>
+                <div class="ss-add-btn">Add to Cart</div>
+              </div>
+            </div>
+          </div>
+        {%- endfor -%}
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+<script>
+(function(){
+  var track = document.getElementById('ssTrack-{{ section.id }}');
+  if(!track) return;
+
+  var idx = 0;
+
+  function updateSlider() {
+    var cards = track.querySelectorAll('.ss-card');
+    if (cards.length === 0) return;
+
+    var firstCard = cards[0];
+    var gap = parseFloat(window.getComputedStyle(track).gap) || 0;
+    var step = firstCard.offsetWidth + gap;
+    
+    var visibleWidth = track.parentElement.offsetWidth;
+    // ডাইনামিকালি ক্যালকুলেট করা হচ্ছে স্ক্রিনে কয়টি অবজেক্ট সম্পূর্ণ ফিট হয়েছে
+    var itemsInEveryView = Math.round(visibleWidth / step);
+    if(window.innerWidth <= 749) {
+      itemsInEveryView = 1; // মোবাইলে ১টি করে শিফট হবে
+    }
+
+    var maxIdx = Math.max(0, cards.length - itemsInEveryView);
+    
+    if (idx > maxIdx) idx = maxIdx;
+    track.style.transform = 'translateX(-' + (idx * step) + 'px)';
+    return maxIdx;
+  }
+
+  document.getElementById('ssNext-{{ section.id }}').addEventListener('click', function(){
+    var maxIdx = updateSlider();
+    if (idx < maxIdx) {
+      idx++;
+      updateSlider();
+    }
+  });
+
+  document.getElementById('ssPrev-{{ section.id }}').addEventListener('click', function(){
+    if (idx > 0) {
+      idx--;
+      updateSlider();
+    }
+  });
+
+  window.addEventListener('resize', updateSlider);
+  document.addEventListener('shopify:section:load', updateSlider);
+  // ইনিশিয়াল লোডের সেফটি বাফার
+  setTimeout(updateSlider, 200);
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Product Carousel",
+  "tag": "section",
+  "class": "section",
+  "disabled_on": { "groups": ["header","footer"] },
+  "settings": [
+    { "type": "header", "content": "Source Collection" },
+    { "type": "collection", "id": "collection", "label": "Select Collection" },
+    { "type": "range", "id": "products_to_show", "label": "Max Products to Show", "min": 4, "max": 20, "step": 1, "default": 8 },
+
+    { "type": "header", "content": "Heading Content" },
+    { "type": "text","id": "label","label": "Eyebrow Label","default": "Just Landed" },
+    { "type": "text","id": "title","label": "Section Title","default": "FRESH DROPS" },
+
+    { "type": "header", "content": "Colors" },
+    { "type": "color","id": "bg_color",       "label": "Background",       "default": "#0b0b0f" },
+    { "type": "color","id": "title_color",    "label": "Title Color",       "default": "#f4f0e8" },
+    { "type": "color","id": "accent_color",   "label": "Accent Color",      "default": "#c8a96e" },
+    { "type": "color","id": "card_bg",        "label": "Card Background",   "default": "#111318" },
+    { "type": "color","id": "card_text",      "label": "Card Text Color",   "default": "#f4f0e8" },
+    { "type": "color","id": "muted_color",    "label": "Muted / Compare",   "default": "#737373" },
+    { "type": "color","id": "img_bg",         "label": "Image Placeholder", "default": "#141620" },
+    { "type": "color","id": "nav_border",     "label": "Nav Button Border",  "default": "#ffffff" },
+    { "type": "color","id": "nav_color",      "label": "Nav Button Icon",    "default": "#ffffff" },
+
+    { "type": "header", "content": "Typography" },
+    { "type": "range","id": "lbl_size",         "label": "Label Size (px)",   "min":8,"max":16,"step":1,"default":11 },
+    { "type": "range","id": "title_size",        "label": "Desktop Title (px)","min":28,"max":100,"step":2,"default":64 },
+    { "type": "range","id": "mobile_title_size", "label": "Mobile Title (px)", "min":22,"max":72,"step":2,"default":42 },
+    { "type": "range","id": "name_size",         "label": "Product Name (px)", "min":12,"max":24,"step":1,"default":16 },
+    { "type": "range","id": "price_size",        "label": "Price (px)",        "min":14,"max":28,"step":1,"default":20 },
+
+    { "type": "header", "content": "Card Layout & Image Style" },
+    { "type": "select", "id": "img_ratio", "label": "Image Aspect Ratio", "options": [ { "value": "original", "label": "Original (Uses fixed height below)" }, { "value": "square", "label": "Square (1:1)" }, { "value": "portrait", "label": "Portrait (3:4)" }, { "value": "landscape", "label": "Landscape (4:3)" } ], "default": "original" },
+    { "type": "select", "id": "img_fit", "label": "Image Fit Style", "options": [ { "value": "cover", "label": "Cover (Crop to fill)" }, { "value": "contain", "label": "Contain (Fit full image)" } ], "default": "cover" },
+    { "type": "range","id": "card_gap",         "label": "Gap Between Cards (px)",  "min":8,"max":40,"step":2,"default":22 },
+    { "type": "range","id": "img_height",       "label": "Image Area Height (px - Original Mode Only)", "min":140,"max":396,"step":8,"default":260 },
+    { "type": "range","id": "card_radius",      "label": "Card Border Radius (px)", "min":0,"max":20,"step":1,"default":6 },
+    { "type": "range","id": "card_pad",         "label": "Card Body Padding (px)",  "min":10,"max":36,"step":2,"default":20 },
+
+    { "type": "header", "content": "Desktop Spacing" },
+    { "type": "range","id": "padding_top",   "label": "Padding Top (px)",  "min":0,"max":120,"step":4,"default":100 },
+    { "type": "range","id": "padding_bottom","label": "Padding Bottom (px)","min":0,"max":120,"step":4,"default":100 },
+    { "type": "range","id": "side_padding",  "label": "Side Padding (px)", "min":0,"max":120,"step":4,"default":80 },
+
+    { "type": "header", "content": "Mobile Spacing" },
+    { "type": "range","id": "mobile_padding_top",   "label": "Mobile Padding Top (px)",   "min":0,"max":80,"step":4,"default":60 },
+    { "type": "range","id": "mobile_padding_bottom","label": "Mobile Padding Bottom (px)","min":0,"max":80,"step":4,"default":60 }
+  ],
+  "presets": [
+    {
+      "name": "Product Carousel"
+    }
+  ]
+}
+{% endschema %}
