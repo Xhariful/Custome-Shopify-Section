@@ -1,0 +1,372 @@
+{%- style -%}
+  .fuze-section-{{ section.id }} {
+    padding-top: {{ section.settings.padding_top_mobile }}px;
+    padding-bottom: {{ section.settings.padding_bottom_mobile }}px;
+    background-color: {{ section.settings.bg_color }};
+  }
+
+  /* Font Size & Weight Configuration (Mobile First) */
+  .fuze-section-{{ section.id }} .fuze-title {
+    font-family: var(--font-heading-family), 'Montserrat', sans-serif;
+    font-size: {{ section.settings.title_size_mobile }}px;
+    color: {{ section.settings.text_color }};
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    line-height: 1.2;
+    margin: 0 0 1rem 0;
+    text-transform: uppercase;
+  }
+
+  .fuze-section-{{ section.id }} .fuze-text {
+    font-family: var(--font-body-family), 'Inter', sans-serif;
+    font-size: {{ section.settings.text_size_mobile }}px;
+    color: {{ section.settings.text_color }};
+    line-height: 1.6;
+    margin: 0 0 2rem 0;
+    opacity: 0.9;
+  }
+
+  /* Core Layout (Mobile First) */
+  .fuze-container-{{ section.id }} {
+    max-width: 1500px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    gap: 2rem;
+  }
+
+  .fuze-image-side-{{ section.id }},
+  .fuze-content-side-{{ section.id }} {
+    width: 100%;
+  }
+
+  .fuze-image-wrapper {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4/3;
+    overflow: hidden;
+  }
+
+  .fuze-image-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  .fuze-content-side-{{ section.id }} {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 1rem 0;
+  }
+
+  /* Dynamic Custom Button Engine */
+  .fuze-btn-{{ section.id }} {
+    display: inline-block;
+    width: fit-content;
+    font-family: var(--font-heading-family), 'Montserrat', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    text-decoration: none;
+    text-align: center;
+    padding: 14px 40px;
+    border-radius: 50px; /* Fully rounded capsule button like image_f42c7b.png */
+    transition: all 0.3s ease;
+    background-color: {{ section.settings.btn_bg_color }};
+    color: {{ section.settings.btn_text_color }};
+    border: 1px solid {{ section.settings.btn_bg_color }};
+  }
+
+  .fuze-btn-{{ section.id }}:hover {
+    background-color: {{ section.settings.btn_hover_bg_color }};
+    color: {{ section.settings.btn_hover_text_color }};
+    border-color: {{ section.settings.btn_hover_bg_color }};
+  }
+
+  /* Responsive Desktop Layout (Min-width: 768px / 992px) */
+  @media screen and (min-width: 992px) {
+    .fuze-section-{{ section.id }} {
+      padding-top: {{ section.settings.padding_top_desktop }}px;
+      padding-bottom: {{ section.settings.padding_bottom_desktop }}px;
+    }
+
+    .fuze-container-{{ section.id }} {
+      flex-direction: {% if section.settings.layout == 'image_first' %}row{% else %}row-reverse{% endif %};
+      align-items: stretch;
+      gap: 0;
+    }
+
+    .fuze-image-side-{{ section.id }},
+    .fuze-content-side-{{ section.id }} {
+      width: 50%;
+    }
+
+    .fuze-image-wrapper {
+      aspect-ratio: auto;
+      height: 100%;
+      min-height: 480px;
+    }
+
+    .fuze-content-side-{{ section.id }} {
+      padding: 4rem;
+      background-color: {{ section.settings.content_bg_color }};
+    }
+
+    /* Desktop Typography Range Controls */
+    .fuze-section-{{ section.id }} .fuze-title {
+      font-size: {{ section.settings.title_size_desktop }}px;
+    }
+
+    .fuze-section-{{ section.id }} .fuze-text {
+      font-size: {{ section.settings.text_size_desktop }}px;
+    }
+  }
+{%- endstyle -%}
+
+<section class="fuze-section-{{ section.id }}">
+  <div class="fuze-container-{{ section.id }}">
+    
+    <!-- Left/Right Image Block -->
+    <div class="fuze-image-side-{{ section.id }}">
+      <div class="fuze-image-wrapper">
+        {%- if section.settings.image != blank -%}
+          {{ section.settings.image | image_url: width: 1200 | image_tag: loading: 'lazy', sizes: '(min-width: 992px) 50vw, 100vw', class: 'fuze-img-fluid' }}
+        {%- else -%}
+          {{ 'image' | placeholder_svg_tag: 'w-full h-full object-cover bg-neutral-200' }}
+        {%- endif -%}
+      </div>
+    </div>
+
+    <!-- Left/Right Text Content Block -->
+    <div class="fuze-content-side-{{ section.id }}">
+      {%- if section.settings.title != blank -%}
+        <h2 class="fuze-title">{{ section.settings.title | escape }}</h2>
+      {%- endif -%}
+      
+      {%- if section.settings.text != blank -%}
+        <div class="fuze-text">
+          {{ section.settings.text }}
+        </div>
+      {%- endif -%}
+
+      {%- if section.settings.button_label != blank and section.settings.button_link != blank -%}
+        <a href="{{ section.settings.button_link }}" class="fuze-btn-{{ section.id }}">
+          {{ section.settings.button_label | escape }}
+        </a>
+      {%- endif -%}
+    </div>
+
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Image with Text (CTA)",
+  "tag": "section",
+  "class": "shopify-fuze-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Layout Configuration"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Select Section Image"
+    },
+    {
+      "type": "select",
+      "id": "layout",
+      "options": [
+        { "value": "image_first", "label": "Image Left / Text Right" },
+        { "value": "text_first", "label": "Text Left / Image Right" }
+      ],
+      "default": "image_first",
+      "label": "Desktop Layout Alignment"
+    },
+    {
+      "type": "header",
+      "content": "Text Content Adjustments"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "default": "FUZE BY KINGGEE",
+      "label": "Heading Text"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "default": "<p>Introducing FUZE by KingGee, the next generation of workwear. Made to be seen, go from the site to the street in KingGee's new range Fuze. Specifically designed for both a Men's and Women's fit, deck yourself out from top to toe, with a mix of pants, shorts, tees, hoodies and accessories to give you the extra edge you've been looking for.</p>",
+      "label": "Body Description Text"
+    },
+    {
+      "type": "header",
+      "content": "Desktop Typography Controls"
+    },
+    {
+      "type": "range",
+      "id": "title_size_desktop",
+      "min": 20,
+      "max": 70,
+      "step": 1,
+      "unit": "px",
+      "label": "Heading Font Size (Desktop)",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "text_size_desktop",
+      "min": 12,
+      "max": 28,
+      "step": 1,
+      "unit": "px",
+      "label": "Body Font Size (Desktop)",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "Mobile Typography Controls"
+    },
+    {
+      "type": "range",
+      "id": "title_size_mobile",
+      "min": 18,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "label": "Heading Font Size (Mobile)",
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "text_size_mobile",
+      "min": 11,
+      "max": 22,
+      "step": 1,
+      "unit": "px",
+      "label": "Body Font Size (Mobile)",
+      "default": 14
+    },
+    {
+      "type": "header",
+      "content": "Button Setup & Links"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "default": "SHOP NOW",
+      "label": "Button Label"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button Redirect URL",
+      "default": "/collections/all"
+    },
+    {
+      "type": "header",
+      "content": "Section Colors"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Outer Section Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "content_bg_color",
+      "label": "Text Box Background (Desktop Grid)",
+      "default": "#f4f4f5"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Elements Color",
+      "default": "#000000"
+    },
+    {
+      "type": "header",
+      "content": "Button Component Colors"
+    },
+    {
+      "type": "color",
+      "id": "btn_bg_color",
+      "label": "Button Background Color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "btn_text_color",
+      "label": "Button Text Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "btn_hover_bg_color",
+      "label": "Button Hover Background Color",
+      "default": "#333333"
+    },
+    {
+      "type": "color",
+      "id": "btn_hover_text_color",
+      "label": "Button Hover Text Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Section Core Range Padding Settings"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_desktop",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Top Padding (Desktop)",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_desktop",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom Padding (Desktop)",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Top Padding (Mobile)",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom Padding (Mobile)",
+      "default": 32
+    }
+  ],
+  "presets": [
+    {
+      "name": "Image with Text (CTA)"
+    }
+  ]
+}
+{% endschema %}
