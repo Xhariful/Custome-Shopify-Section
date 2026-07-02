@@ -1,0 +1,504 @@
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+    background-color: {{ section.settings.bg_color }};
+  }
+
+  .section-container{
+    max-width: 1500px;
+    margin: auto;
+  }
+
+  @media screen and (min-width: 768px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+
+  /* Typography Adjustments with Custom Schema Adjustments */
+  .category-section__title {
+    font-family: var(--font-heading-family), 'Montserrat', sans-serif;
+    color: {{ section.settings.text_color }};
+    letter-spacing: 0.05em;
+    line-height: 1.1;
+    font-size: {{ section.settings.title_size_mobile }}px;
+  }
+  
+  .category-section__subtitle {
+    color: {{ section.settings.text_muted_color }};
+  }
+
+  @media screen and (min-width: 768px) {
+    .category-section__title {
+      font-size: {{ section.settings.title_size_desktop }}px;
+    }
+  }
+
+  /* Core Layout Grid System */
+  .category-grid {
+    display: grid;
+    grid-template-columns: repeat({{ section.settings.columns_mobile }}, minmax(0, 1fr));
+    gap: {{ section.settings.grid_gap }}px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  @media screen and (min-width: 768px) {
+    .category-grid {
+      grid-template-columns: repeat({{ section.settings.columns_desktop }}, minmax(0, 1fr));
+    }
+  }
+
+  /* Interactive Category Card Component */
+  .category-card {
+    position: relative;
+    display: block;
+    width: 100%;
+    border-radius: 4px; /* rounded original */
+    border: 1px solid {{ section.settings.border_color }};
+    background-color: {{ section.settings.card_bg_color }};
+    overflow: hidden;
+    text-decoration: none;
+    transition: border-color 0.3s ease;
+    
+    /* Configurazione Aspect Ratio Dinamica Mobile */
+    aspect-ratio: {{ section.settings.ratio_mobile }};
+  }
+
+  @media screen and (min-width: 768px) {
+    .category-card {
+      /* Configurazione Aspect Ratio Dinamica Desktop */
+      aspect-ratio: {{ section.settings.ratio_desktop }};
+    }
+  }
+
+  .category-card:hover {
+    border-color: {{ section.settings.primary_brand_color }};
+  }
+
+  /* Responsive Background Image Handling */
+  .category-card__image-wrapper {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+  }
+  .category-card__image-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    transition: transform 0.5s ease;
+  }
+  .category-card:hover .category-card__image-wrapper img {
+    transform: scale(1.04);
+  }
+
+  /* Gradient Overlay Skin */
+  .category-card__overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    background: linear-gradient(to top right, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.3) 50%, transparent 100%);
+  }
+
+  /* Content Wrapper Content Placement */
+  .category-card__content {
+    position: absolute;
+    inset: 0;
+    padding: 1.5rem; /* p-6 */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    z-index: 3;
+  }
+
+  .category-card__title {
+    font-family: var(--font-heading-family), 'Montserrat', sans-serif;
+    color: #ffffff;
+    letter-spacing: 0.05em;
+    margin: 0;
+    line-height: 1.2;
+    font-size: {{ section.settings.card_title_size_mobile }}px;
+  }
+
+  .category-card__action {
+    display: inline-flex;
+    align-items: center;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: {{ section.settings.primary_brand_color }};
+    margin-top: 0.25rem;
+    transition: transform 0.3s ease;
+    font-size: {{ section.settings.action_size_mobile }}px;
+  }
+
+  @media screen and (min-width: 768px) {
+    .category-card__title {
+      font-size: {{ section.settings.card_title_size_desktop }}px;
+    }
+    .category-card__action {
+      font-size: {{ section.settings.action_size_desktop }}px;
+    }
+  }
+
+  .category-card:hover .category-card__action {
+    transform: translateX(4px);
+  }
+
+  /* Technical Micro Graphic Details (Diagonal Stripes Asset) */
+  .category-card__stripes {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    width: 3rem;
+    height: 0.25rem;
+    z-index: 3;
+    opacity: 0.6;
+    background: repeating-linear-gradient(
+      -45deg,
+      {{ section.settings.primary_brand_color }},
+      {{ section.settings.primary_brand_color }} 2px,
+      transparent 2px,
+      transparent 6px
+    );
+  }
+{%- endstyle -%}
+
+<section class="section-{{ section.id }}-padding" data-aos="{{ section.settings.animation }}">
+  <div class="section-container max-w-7xl mx-auto px-4 md:px-6">
+    
+    <div class="flex items-end justify-between mb-8">
+      <div>
+        {%- if section.settings.title != blank -%}
+          <h2 class="category-section__title font-bold">{{ section.settings.title | escape }}</h2>
+        {%- endif -%}
+        {%- if section.settings.subtitle != blank -%}
+          <p class="category-section__subtitle text-sm md:text-base mt-2">{{ section.settings.subtitle | escape }}</p>
+        {%- endif -%}
+      </div>
+    </div>
+
+    <div class="category-grid">
+      {%- for block in section.blocks -%}
+        {%- case block.type -%}
+          {%- when 'collection_card' -%}
+            {%- assign target_collection = collections[block.settings.collection] -%}
+            {%- assign fallback_title = "Categoria" | append: forloop.index -%}
+            
+            <a href="{{ target_collection.url | default: '#' }}" class="category-card group" {{ block.shopify_attributes }}>
+              
+              <div class="category-card__image-wrapper">
+                {%- if block.settings.custom_image != blank -%}
+                  {{ block.settings.custom_image | image_url: width: 800 | image_tag: loading: 'lazy', sizes: '(min-width: 768px) 33vw, 50vw' }}
+                {%- elsif target_collection.image != blank -%}
+                  {{ target_collection.image | image_url: width: 800 | image_tag: loading: 'lazy', sizes: '(min-width: 768px) 33vw, 50vw' }}
+                {%- elsif target_collection.products.first.featured_image != blank -%}
+                  {{ target_collection.products.first.featured_image | image_url: width: 800 | image_tag: loading: 'lazy', sizes: '(min-width: 768px) 33vw, 50vw' }}
+                {%- else -%}
+                  {{ 'collection-1' | placeholder_svg_tag: 'w-full h-full object-cover bg-neutral-200' }}
+                {%- endif -%}
+              </div>
+
+              <div class="category-card__overlay"></div>
+
+              <div class="category-card__stripes"></div>
+
+              <div class="category-card__content">
+                <h3 class="category-card__title font-bold">
+                  {{ block.settings.title | default: target_collection.title | default: fallback_title | escape }}
+                </h3>
+                <span class="category-card__action">
+                  {{ section.settings.action_label | escape }} &rarr;
+                </span>
+              </div>
+
+            </a>
+        {%- endcase -%}
+      {%- endfor -%}
+    </div>
+
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Shop By Category Grid",
+  "tag": "section",
+  "class": "shopify-category-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Core Heading Content Settings"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Section Global Title",
+      "default": "SHOP BY CATEGORY"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Section Alternative Description Text",
+      "default": "Everything you need to kit out the crew."
+    },
+    {
+      "type": "text",
+      "id": "action_label",
+      "label": "Card Interactive CTA Label",
+      "default": "Shop Now"
+    },
+    {
+      "type": "header",
+      "content": "Typography Size Settings (Desktop)"
+    },
+    {
+      "type": "range",
+      "id": "title_size_desktop",
+      "min": 16,
+      "max": 80,
+      "step": 1,
+      "unit": "px",
+      "label": "Section Title Font Size (Desktop)",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "card_title_size_desktop",
+      "min": 14,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "label": "Collection Card Title Font Size (Desktop)",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "action_size_desktop",
+      "min": 10,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Action Button Font Size (Desktop)",
+      "default": 12
+    },
+    {
+      "type": "header",
+      "content": "Typography Size Settings (Mobile)"
+    },
+    {
+      "type": "range",
+      "id": "title_size_mobile",
+      "min": 16,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "label": "Section Title Font Size (Mobile)",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "card_title_size_mobile",
+      "min": 12,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "label": "Collection Card Title Font Size (Mobile)",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "action_size_mobile",
+      "min": 10,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Action Button Font Size (Mobile)",
+      "default": 12
+    },
+    {
+      "type": "header",
+      "content": "Design Aspect Ratio Sizing Options"
+    },
+    {
+      "type": "select",
+      "id": "ratio_desktop",
+      "label": "Card Aspect Ratio Configuration (Desktop)",
+      "default": "5/3",
+      "options": [
+        { "value": "1/1", "label": "Square Layout Look (1:1)" },
+        { "value": "3/4", "label": "Portrait Layout Look (3:4)" },
+        { "value": "4/3", "label": "Standard Classic Photo (4:3)" },
+        { "value": "5/3", "label": "Original Figma Spec (5:3)" },
+        { "value": "16/9", "label": "Landscape Cinematic Look (16:9)" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "ratio_mobile",
+      "label": "Card Aspect Ratio Configuration (Mobile)",
+      "default": "1/1",
+      "options": [
+        { "value": "1/1", "label": "Square Layout Look (1:1)" },
+        { "value": "3/4", "label": "Portrait Layout Look (3:4)" },
+        { "value": "4/3", "label": "Standard Classic Photo (4:3)" },
+        { "value": "16/9", "label": "Landscape Cinematic Look (16:9)" }
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Adaptive Grid Counts Structure Layout"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 2,
+      "max": 5,
+      "step": 1,
+      "label": "Columns Count Placement (Desktop Layout)",
+      "default": 3
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "label": "Columns Count Placement (Mobile Layout Style)",
+      "default": "2",
+      "options": [
+        { "value": "1", "label": "1 Single Full Card View Layout" },
+        { "value": "2", "label": "2 Columns Compact Parallel Layout" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "grid_gap",
+      "min": 8,
+      "max": 32,
+      "step": 4,
+      "unit": "px",
+      "label": "Internal Grid Spacing Gap",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "Theme Branding Engine Colors"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Section Global Container Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "card_bg_color",
+      "label": "Fallback Card Solid Grid Color",
+      "default": "#1c1c1e"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Card Frame Border Color Stroke",
+      "default": "#e4e4e7"
+    },
+    {
+      "type": "color",
+      "id": "primary_brand_color",
+      "label": "Interactive Focus Brand Primary Highlight Accent Color",
+      "default": "#e11d48"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Primary Header Core Text Color",
+      "default": "#09090b"
+    },
+    {
+      "type": "color",
+      "id": "text_muted_color",
+      "label": "Secondary Paragraph Label Muted Text Color",
+      "default": "#71717a"
+    },
+    {
+      "type": "header",
+      "content": "Visual Framwork Effects Elements"
+    },
+    {
+      "type": "select",
+      "id": "animation",
+      "label": "AOS Scroll Reveal Behavior Pattern Trigger",
+      "default": "",
+      "options": [
+        { "value": "", "label": "None" },
+        { "value": "fade", "label": "Fade" },
+        { "value": "fade-up", "label": "Fade Element Up" },
+        { "value": "zoom-in", "label": "Zoom Core Engine In" }
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Section Sizing Range Padding Attributes"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Top Structural Cushion Padding",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom Structural Cushion Padding",
+      "default": 64
+    }
+  ],
+  "blocks": [
+    {
+      "type": "collection_card",
+      "name": "Collection Block Element",
+      "settings": [
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Target Base Collection Mapping Link"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Override Label / Title Display Text",
+          "info": "Lasciare vuoto per ereditare automaticamente il titolo impostato nativamente sulla Collezione Shopify."
+        },
+        {
+          "type": "image_picker",
+          "id": "custom_image",
+          "label": "Override / Alternate Display Cover Artwork Image",
+          "info": "Lasciare vuoto per utilizzare automaticamente la foto di copertina ufficiale della Collezione Shopify o la foto del primo prodotto valido disponibile."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Shop By Category Grid",
+      "blocks": [
+        { "type": "collection_card" },
+        { "type": "collection_card" },
+        { "type": "collection_card" }
+      ]
+    }
+  ]
+}
+{% endschema %}
