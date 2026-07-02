@@ -1,0 +1,479 @@
+{%- style -%}
+  .brand-carousel-{{ section.id }} {
+    padding-top: {{ section.settings.padding_top_mobile }}px;
+    padding-bottom: {{ section.settings.padding_bottom_mobile }}px;
+    background-color: {{ section.settings.bg_color }};
+    overflow: hidden;
+  }
+
+  /* Typography Adjustments (Mobile First) */
+  .brand-carousel-{{ section.id }} .brand-section-title {
+    font-family: var(--font-heading-family), 'Montserrat', sans-serif;
+    font-size: {{ section.settings.title_size_mobile }}px;
+    color: {{ section.settings.text_color }};
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    text-align: center;
+    margin: 0 0 2.5rem 0;
+    line-height: 1.2;
+  }
+
+  /* Infinite Marquee Track Layout */
+  .brand-marquee-container {
+    display: flex;
+    overflow: hidden;
+    user-select: none;
+    width: 100%;
+    position: relative;
+    padding: 1.5rem 0;
+  }
+
+  /* Fade gradient edges for smooth visual blending */
+  .brand-marquee-container::before,
+  .brand-marquee-container::after {
+    content: "";
+    height: 100%;
+    position: absolute;
+    width: 80px;
+    z-index: 2;
+    pointer-events: none;
+  }
+  .brand-marquee-container::before {
+    left: 0;
+    background: linear-gradient(to right, {{ section.settings.bg_color }}, transparent);
+  }
+  .brand-marquee-container::after {
+    right: 0;
+    background: linear-gradient(to left, {{ section.settings.bg_color }}, transparent);
+  }
+
+  /* FIX: max-content e flex-start prevengono la sovrapposizione e lo schiacciamento dei loghi */
+  .brand-marquee-track {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: max-content;
+    flex-shrink: 0;
+    gap: {{ section.settings.logo_gap_mobile }}px;
+    padding-right: {{ section.settings.logo_gap_mobile }}px; /* Mantiene lo spazio perfetto tra la fine e l'inizio del loop */
+    animation: brand-marquee-slide {{ section.settings.scroll_speed }}s linear infinite;
+  }
+
+  {%- if section.settings.pause_on_hover -%}
+    .brand-marquee-container:hover .brand-marquee-track {
+      animation-play-state: paused;
+    }
+  {%- endif -%}
+
+  /* FIX: Definizione rigida delle dimensioni esterne per evitare collisioni */
+  .brand-logo-item {
+    flex-shrink: 0;
+    display: block;
+    width: {{ section.settings.logo_width_mobile }}px;
+    height: auto;
+    transition: opacity 0.3s ease;
+  }
+  
+  .brand-logo-item:hover {
+    opacity: {{ section.settings.logo_hover_opacity | divided_by: 100.0 }};
+  }
+
+  .brand-logo-item img,
+  .brand-logo-item svg {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    display: block;
+  }
+
+  /* Center CTA Button Component */
+  .brand-btn-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: 3rem;
+    padding: 0 1rem;
+  }
+
+  .brand-cta-btn-{{ section.id }} {
+    display: inline-block;
+    font-family: var(--font-heading-family), 'Montserrat', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    text-decoration: none;
+    text-align: center;
+    padding: 14px 36px;
+    border-radius: 50px;
+    transition: all 0.3s ease;
+    background-color: {{ section.settings.btn_bg_color }};
+    color: {{ section.settings.btn_text_color }};
+    border: 1.5px solid {{ section.settings.btn_border_color }};
+  }
+
+  .brand-cta-btn-{{ section.id }}:hover {
+    background-color: {{ section.settings.btn_hover_bg_color }};
+    color: {{ section.settings.btn_hover_text_color }};
+    border-color: {{ section.settings.btn_hover_border_color }};
+  }
+
+  /* FIX: Animazione nativa basata su traslazione totale assecondata da flex-start */
+  @keyframes brand-marquee-slide {
+    0% { transform: translate3d(0, 0, 0); }
+    100% { transform: translate3d(-100%, 0, 0); }
+  }
+
+  /* Responsive Desktop Adjustments */
+  @media screen and (min-width: 768px) {
+    .brand-carousel-{{ section.id }} {
+      padding-top: {{ section.settings.padding_top_desktop }}px;
+      padding-bottom: {{ section.settings.padding_bottom_desktop }}px;
+    }
+
+    .brand-carousel-{{ section.id }} .brand-section-title {
+      font-size: {{ section.settings.title_size_desktop }}px;
+      margin-bottom: 3.5rem;
+    }
+
+    .brand-marquee-track {
+      gap: {{ section.settings.logo_gap_desktop }}px;
+      padding-right: {{ section.settings.logo_gap_desktop }}px;
+    }
+
+    .brand-logo-item {
+      width: {{ section.settings.logo_width_desktop }}px;
+    }
+  }
+{%- endstyle -%}
+
+<section class="brand-carousel-{{ section.id }}" data-aos="{{ section.settings.animation }}">
+  
+  {%- if section.settings.title != blank -%}
+    <h2 class="brand-section-title">{{ section.settings.title | escape }}</h2>
+  {%- endif -%}
+
+  <div class="brand-marquee-container">
+    
+    <!-- Track Row A -->
+    <div class="brand-marquee-track">
+      {%- for block in section.blocks -%}
+        {%- if block.type == 'brand_logo' -%}
+          <a {% if block.settings.brand_link != blank %}href="{{ block.settings.brand_link }}"{% else %}role="link" aria-disabled="true"{% endif %} class="brand-logo-item" {{ block.shopify_attributes }}>
+            {%- if block.settings.logo_image != blank -%}
+              {{ block.settings.logo_image | image_url: width: 400 | image_tag: loading: 'lazy', alt: block.settings.logo_image.alt | default: "Brand Logo" }}
+            {%- else -%}
+              {{ 'logo' | placeholder_svg_tag: 'w-full h-full text-neutral-400 bg-neutral-100' }}
+            {%- endif -%}
+          </a>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+
+    <!-- Track Row B (Identical clone for seamless transition loops) -->
+    <div class="brand-marquee-track" aria-hidden="true">
+      {%- for block in section.blocks -%}
+        {%- if block.type == 'brand_logo' -%}
+          <div class="brand-logo-item">
+            {%- if block.settings.logo_image != blank -%}
+              {{ block.settings.logo_image | image_url: width: 400 | image_tag: loading: 'lazy', alt: block.settings.logo_image.alt | default: "Brand Logo" }}
+            {%- else -%}
+              {{ 'logo' | placeholder_svg_tag: 'w-full h-full text-neutral-400 bg-neutral-100' }}
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+
+  </div>
+
+  {%- if section.settings.button_label != blank and section.settings.button_link != blank -%}
+    <div class="brand-btn-wrapper">
+      <a href="{{ section.settings.button_link }}" class="brand-cta-btn-{{ section.id }}">
+        {{ section.settings.button_label | escape }}
+      </a>
+    </div>
+  {%- endif -%}
+
+</section>
+
+{% schema %}
+{
+  "name": "Brand Logo Carousel",
+  "tag": "section",
+  "class": "shopify-brand-carousel-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Core Branding Content Settings"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "default": "SHOP BY BRAND",
+      "label": "Section Heading Label"
+    },
+    {
+      "type": "header",
+      "content": "Marquee Performance Speed Controls"
+    },
+    {
+      "type": "range",
+      "id": "scroll_speed",
+      "min": 5,
+      "max": 60,
+      "step": 1,
+      "unit": "s",
+      "label": "Marquee Scroll Duration (Speed)",
+      "default": 25,
+      "info": "Valori minori aumentano la velocità dello scorrimento. Valori alti lo rendono più lento e fluido."
+    },
+    {
+      "type": "checkbox",
+      "id": "pause_on_hover",
+      "default": true,
+      "label": "Metti in pausa lo scorrimento al passaggio del mouse (Hover)"
+    },
+    {
+      "type": "header",
+      "content": "Desktop Sizing Adjustment Sliders"
+    },
+    {
+      "type": "range",
+      "id": "title_size_desktop",
+      "min": 20,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "label": "Heading Font Size (Desktop)",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "logo_width_desktop",
+      "min": 80,
+      "max": 260,
+      "step": 5,
+      "unit": "px",
+      "label": "Single Logo Max Width (Desktop)",
+      "default": 140
+    },
+    {
+      "type": "range",
+      "id": "logo_gap_desktop",
+      "min": 20,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Logo Horizontal Gaps (Desktop)",
+      "default": 64
+    },
+    {
+      "type": "header",
+      "content": "Mobile Sizing Adjustment Sliders"
+    },
+    {
+      "type": "range",
+      "id": "title_size_mobile",
+      "min": 16,
+      "max": 36,
+      "step": 1,
+      "unit": "px",
+      "label": "Heading Font Size (Mobile)",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "logo_width_mobile",
+      "min": 60,
+      "max": 180,
+      "step": 5,
+      "unit": "px",
+      "label": "Single Logo Max Width (Mobile)",
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "logo_gap_mobile",
+      "min": 15,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "label": "Logo Horizontal Gaps (Mobile)",
+      "default": 40
+    },
+    {
+      "type": "header",
+      "content": "Button Setup & Styling Rules"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "default": "EXPLORE ALL BRANDS",
+      "label": "CTA Button Label Text"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "CTA Redirect Target URL"
+    },
+    {
+      "type": "header",
+      "content": "Color Engine Control Palettes"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Section Global Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Header Text Color Label",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "logo_hover_opacity",
+      "min": 30,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Logo Image Hover Opacity Interaction",
+      "default": 70
+    },
+    {
+      "type": "header",
+      "content": "Button Component Coloring Rules"
+    },
+    {
+      "type": "color",
+      "id": "btn_bg_color",
+      "label": "Button Solid Background Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "btn_text_color",
+      "label": "Button Core Label Text Color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "btn_border_color",
+      "label": "Button Stroke Outline Border Color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "btn_hover_bg_color",
+      "label": "Button Hover Background Color State",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "btn_hover_text_color",
+      "label": "Button Hover Text Color State",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "btn_hover_border_color",
+      "label": "Button Hover Border Color State",
+      "default": "#000000"
+    },
+    {
+      "type": "header",
+      "content": "Layout Padding Sizing Controls"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_desktop",
+      "min": 0,
+      "max": 140,
+      "step": 4,
+      "unit": "px",
+      "label": "Top Spacing Cushion (Desktop Layout)",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_desktop",
+      "min": 0,
+      "max": 140,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom Spacing Cushion (Desktop Layout)",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Top Spacing Cushion (Mobile Layout)",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom Spacing Cushion (Mobile Layout)",
+      "default": 40
+    },
+    {
+      "type": "header",
+      "content": "Visual Framework Special Effects"
+    },
+    {
+      "type": "select",
+      "id": "animation",
+      "label": "AOS Framework Library Activation",
+      "default": "",
+      "options": [
+        { "value": "", "label": "None" },
+        { "value": "fade", "label": "Fade" },
+        { "value": "fade-up", "label": "Fade Element Up" },
+        { "value": "zoom-in", "label": "Zoom Engine In" }
+      ]
+    }
+  ],
+  "blocks": [
+    {
+      "type": "brand_logo",
+      "name": "Brand Logo Element",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "logo_image",
+          "label": "Brand Logo Image SVG / PNG Vector Asset"
+        },
+        {
+          "type": "url",
+          "id": "brand_link",
+          "label": "Custom Target Brand Link URL"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Brand Logo Carousel",
+      "blocks": [
+        { "type": "brand_logo" },
+        { "type": "brand_logo" },
+        { "type": "brand_logo" },
+        { "type": "brand_logo" },
+        { "type": "brand_logo" },
+        { "type": "brand_logo" }
+      ]
+    }
+  ]
+}
+{% endschema %}
