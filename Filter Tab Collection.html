@@ -73,7 +73,6 @@
     border-radius: {{ section.settings.card_radius }}px;
     overflow: hidden;
     transition: transform .32s ease, border-color .28s, box-shadow .28s;
-    text-decoration: none;
     color: {{ section.settings.card_text }};
     display: block;
   }
@@ -81,6 +80,11 @@
     transform: translateY(-{{ section.settings.hover_lift }}px);
     border-color: {{ section.settings.accent_color }}55;
     box-shadow: 0 24px 60px rgba(0,0,0,.35);
+  }
+  #sole-tabs-{{ section.id }} .stab-link-wrap {
+    text-decoration: none;
+    color: inherit;
+    display: block;
   }
   #sole-tabs-{{ section.id }} .stab-card-img {
     display: flex;
@@ -116,7 +120,7 @@
     margin-bottom: 5px;
     color: {{ section.settings.card_text }};
     display: -webkit-box;
-    -webkit-line-clamp: 2; /* Maximum 2 lines */
+    -webkit-line-clamp: 2; 
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -150,13 +154,16 @@
     cursor: pointer;
     font-family: inherit;
     transition: background .22s, transform .22s;
-    text-decoration: none;
     display: inline-block;
   }
-  #sole-tabs-{{ section.id }} .stab-add-btn:hover {
+  #sole-tabs-{{ section.id }} .stab-add-btn:hover:not(:disabled) {
     background: {{ section.settings.accent_color }};
     color: {{ section.settings.bg_color }};
     transform: scale(1.05);
+  }
+  #sole-tabs-{{ section.id }} .stab-add-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
   }
   #sole-tabs-{{ section.id }} .stab-see-more-wrapper {
     grid-column: 1 / -1;
@@ -266,24 +273,41 @@
         
         {%- if product_list != blank -%}
           {%- for product in product_list limit: limit -%}
-            <a href="{{ product.url }}" class="stab-card">
-              <div class="stab-card-img">
-                {%- if product.featured_image != blank -%}
-                  {{ product.featured_image | image_url: width: 600 | image_tag: loading: 'lazy', alt: product.title }}
-                {%- else -%}
-                  {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
-                {%- endif -%}
-              </div>
+            <div class="stab-card">
+              <a href="{{ product.url }}" class="stab-link-wrap">
+                <div class="stab-card-img">
+                  {%- if product.featured_image != blank -%}
+                    {{ product.featured_image | image_url: width: 600 | image_tag: loading: 'lazy', alt: product.title }}
+                  {%- if product.available == false -%}
+                    <span class="ss-pill" style="position:absolute; top:12px; right:12px; background:#555; color:#fff; font-size:.6rem; padding:4px 8px; font-weight:700; border-radius:2px;">SOLD OUT</span>
+                  {%- endif -%}
+                  {%- else -%}
+                    {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+                  {%- endif -%}
+                </div>
+              </a>
+              
               <div class="stab-body">
-                <p class="stab-card-tag">{{ block.settings.tab_name }}</p>
-                <p class="stab-card-name">{{ product.title }}</p>
-                <p class="stab-card-sub">{{ product.type }}</p>
+                <a href="{{ product.url }}" class="stab-link-wrap">
+                  <p class="stab-card-tag">{{ block.settings.tab_name }}</p>
+                  <p class="stab-card-name">{{ product.title }}</p>
+                  <p class="stab-card-sub">{{ product.type }}</p>
+                </a>
+                
                 <div class="stab-foot">
                   <span class="stab-price">{{ product.price | money }}</span>
-                  <span class="stab-add-btn">Add to Bag</span>
+                  
+                  <button 
+                    type="button" 
+                    class="stab-add-btn dynamic-ajax-add" 
+                    data-variant-id="{{ product.first_available_variant.id }}"
+                    {% unless product.available %}disabled{% endunless %}
+                  >
+                    {%- if product.available -%}Add to Cart{%- else -%}Sold Out{%- endif -%}
+                  </button>
                 </div>
               </div>
-            </a>
+            </div>
           {%- endfor -%}
 
           {%- if product_list.size > limit -%}
@@ -302,7 +326,7 @@
                 <p class="stab-card-sub">Style · Description</p>
                 <div class="stab-foot">
                   <span class="stab-price">$199</span>
-                  <span class="stab-add-btn">Add to Bag</span>
+                  <button type="button" class="stab-add-btn" disabled>Add to Cart</button>
                 </div>
               </div>
             </div>
@@ -319,6 +343,7 @@
   var sec = document.getElementById('sole-tabs-{{ section.id }}');
   if(!sec) return;
 
+  // ট্যাব সুইচিং লজিক
   function switchTab(targetId) {
     sec.querySelectorAll('.stab-panel').forEach(function(p){ p.classList.remove('active'); });
     var panel = document.getElementById(targetId);
@@ -340,13 +365,84 @@
   if(mobileSelect) {
     mobileSelect.addEventListener('change', function(e){
       switchTab(e.target.value);
-      
       sec.querySelectorAll('.stab-btn').forEach(function(b){ 
         b.classList.remove('active'); 
         if(b.dataset.tab === e.target.value) b.classList.add('active');
       });
     });
   }
+
+  // অনটাইম কার্ট কাউন্ট আপডেটসহ AJAX অ্যাড-টু-কার্ট ফাংশনালিটি
+  sec.querySelectorAll('.dynamic-ajax-add').forEach(function(button) {
+    button.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation(); 
+
+      var variantId = this.getAttribute('data-variant-id');
+      if (!variantId) return;
+
+      var self = this;
+      var originalText = self.innerText;
+      self.innerText = 'Adding...';
+      self.disabled = true;
+
+      var formData = {
+        'items': [{
+          'id': parseInt(variantId),
+          'quantity': 1
+        }]
+      };
+
+      fetch(window.Shopify.routes.root + 'cart/add.js', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      })
+      .then(function(response) { return response.json(); })
+      .then(function(data) {
+        self.innerText = 'Added!';
+        
+        // ১. কার্টের নতুন টোটাল কাউন্ট আনার জন্য cart.js কল করা
+        fetch(window.Shopify.routes.root + 'cart.js')
+        .then(function(res) { return res.json(); })
+        .then(function(cart) {
+          // থিমের হেডার বা বুদবুদে থাকা কার্ট কাউন্টের সম্ভাব্য সব ক্লাস/আইডি খুঁজে আপডেট করা
+          var countElements = document.querySelectorAll('.cart-count-bubble, #CartCount, .cart-link__count, [data-cart-count]');
+          countElements.forEach(function(el) {
+            el.innerText = cart.item_count;
+            // কাউন্ট ০ থেকে ১ হলে কিছু থিমে ডিসপ্লে হিডেন থাকে, তাই শো করানো
+            if(el.classList.contains('hidden')) el.classList.remove('hidden');
+            if(el.style.display === 'none') el.style.display = 'block';
+          });
+        });
+
+        // ২. Dawn বা স্ট্যান্ডার্ড থিমের কার্ট নোটিফিকেশন/ড্রয়ার পপআপ ওপেন করার ট্রিকস
+        var cartNotification = document.querySelector('cart-notification') || document.querySelector('cart-drawer');
+        if (cartNotification && typeof cartNotification.renderContents === 'function') {
+          cartNotification.renderContents(data);
+        } else {
+          // অন্য থিমের জন্য গ্লোবাল ইভেন্ট ফায়ার করা
+          document.dispatchEvent(new CustomEvent('cart:updated', {
+            bubbles: true,
+            detail: { product: data }
+          }));
+          document.dispatchEvent(new CustomEvent('ajaxProduct:added', {
+            detail: { product: data }
+          }));
+        }
+
+        setTimeout(function(){
+          self.innerText = originalText;
+          self.disabled = false;
+        }, 1800);
+      })
+      .catch(function(error) {
+        console.error('Error:', error);
+        self.innerText = 'Error';
+        self.disabled = false;
+      });
+    });
+  });
 })();
 </script>
 
