@@ -52,7 +52,6 @@
     will-change: transform;
   }
   #sole-slide-{{ section.id }} .ss-card {
-    /* ডেক্সটপে ৪টি কলাম ফিক্সড করার ক্যালকুলেশন (৩টি গ্যাপ বাদ দিয়ে ৪ ভাগে ভাগ) */
     width: calc((100% - (3 * {{ section.settings.card_gap }}px)) / 4);
     min-width: calc((100% - (3 * {{ section.settings.card_gap }}px)) / 4);
     background: {{ section.settings.card_bg }};
@@ -60,7 +59,6 @@
     overflow: hidden;
     flex-shrink: 0;
     transition: transform .4s ease, box-shadow .4s;
-    text-decoration: none;
     color: {{ section.settings.card_text }};
     display: flex;
     flex-direction: column;
@@ -68,6 +66,11 @@
   #sole-slide-{{ section.id }} .ss-card:hover {
     transform: translateY(-12px);
     box-shadow: 0 10px 20px rgba(0,0,0,.5);
+  }
+  #sole-slide-{{ section.id }} .ss-link-wrap {
+    text-decoration: none;
+    color: inherit;
+    display: block;
   }
   #sole-slide-{{ section.id }} .ss-card-img {
     position: relative;
@@ -163,12 +166,17 @@
     text-transform: uppercase;
     text-align: center;
     cursor: pointer;
+    font-family: inherit;
     transition: background 0.3s, border-color 0.3s, color 0.3s;
   }
-  #sole-slide-{{ section.id }} .ss-card:hover .ss-add-btn {
+  #sole-slide-{{ section.id }} .ss-card:hover .ss-add-btn:not(:disabled) {
     background: {{ section.settings.accent_color }};
     border-color: {{ section.settings.accent_color }};
     color: {{ section.settings.bg_color }};
+  }
+  #sole-slide-{{ section.id }} .ss-add-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
   }
 
   @media screen and (max-width: 749px) {
@@ -179,7 +187,6 @@
     #sole-slide-{{ section.id }} .ss-head { padding: 0 20px; margin-bottom: 32px; }
     #sole-slide-{{ section.id }} .ss-wrap { padding: 24px 20px 16px; }
     #sole-slide-{{ section.id }} .ss-card { 
-      /* মোবাইলে ১টি পুরো কার্ড এবং ২য় কার্ডের একটু অংশ (Peek view) দেখানোর ক্যালকুলেশন */
       width: calc(100% - 40px);
       min-width: calc(100% - 40px);
     }
@@ -206,34 +213,49 @@
 
       {%- if selected_collection != blank and selected_collection.all_products_count > 0 -%}
         {%- for product in selected_collection.products limit: product_limit -%}
-          <a href="{{ product.url }}" class="ss-card">
-            <div class="ss-card-img">
-              {%- if product.featured_image != blank -%}
-                {{ product.featured_image | image_url: width: 700 | image_tag: loading: 'lazy', alt: product.title }}
-              {%- else -%}
-                {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
-              {%- endif -%}
+          <div class="ss-card">
+            <a href="{{ product.url }}" class="ss-link-wrap">
+              <div class="ss-card-img">
+                {%- if product.featured_image != blank -%}
+                  {{ product.featured_image | image_url: width: 700 | image_tag: loading: 'lazy', alt: product.title }}
+                {%- else -%}
+                  {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+                {%- endif -%}
 
-              {%- if product.available == false -%}
-                <span class="ss-pill" style="background: #555;">Sold Out</span>
-              {%- elsif product.compare_at_price > product.price -%}
-                <span class="ss-pill">Sale</span>
-              {%- endif -%}
-            </div>
+                {%- if product.available == false -%}
+                  <span class="ss-pill" style="background: #555;">Sold Out</span>
+                {%- elsif product.compare_at_price > product.price -%}
+                  <span class="ss-pill">Sale</span>
+                {%- endif -%}
+              </div>
+            </a>
+            
             <div class="ss-body">
-              <p class="ss-brand">{{ product.vendor | default: 'SOLE Labs' }}</p>
-              <p class="ss-name">{{ product.title }}</p>
+              <a href="{{ product.url }}" class="ss-link-wrap">
+                <p class="ss-brand">{{ product.vendor | default: 'SOLE Labs' }}</p>
+                <p class="ss-name">{{ product.title }}</p>
+              </a>
               <div class="ss-foot">
-                <div class="ss-price-wrapper">
-                  <span class="ss-price">{{ product.price | money }}</span>
-                  {%- if product.compare_at_price > product.price -%}
-                    <s class="ss-compare">{{ product.compare_at_price | money }}</s>
-                  {%- endif -%}
-                </div>
-                <div class="ss-add-btn">Add to Cart</div>
+                <a href="{{ product.url }}" class="ss-link-wrap">
+                  <div class="ss-price-wrapper">
+                    <span class="ss-price">{{ product.price | money }}</span>
+                    {%- if product.compare_at_price > product.price -%}
+                      <s class="ss-compare">{{ product.compare_at_price | money }}</s>
+                    {%- endif -%}
+                  </div>
+                </a>
+                
+                <button 
+                  type="button" 
+                  class="ss-add-btn carousel-ajax-add" 
+                  data-variant-id="{{ product.first_available_variant.id }}"
+                  {% unless product.available %}disabled{% endunless %}
+                >
+                  {%- if product.available -%}Add to Cart{%- else -%}Sold Out{%- endif -%}
+                </button>
               </div>
             </div>
-          </a>
+          </div>
         {%- endfor -%}
       {%- else -%}
         {%- for i in (1..product_limit) -%}
@@ -249,7 +271,7 @@
                 <div class="ss-price-wrapper">
                   <span class="ss-price">$199.00</span>
                 </div>
-                <div class="ss-add-btn">Add to Cart</div>
+                <button type="button" class="ss-add-btn" disabled>Add to Cart</button>
               </div>
             </div>
           </div>
@@ -275,10 +297,9 @@
     var step = firstCard.offsetWidth + gap;
     
     var visibleWidth = track.parentElement.offsetWidth;
-    // ডাইনামিকালি ক্যালকুলেট করা হচ্ছে স্ক্রিনে কয়টি অবজেক্ট সম্পূর্ণ ফিট হয়েছে
     var itemsInEveryView = Math.round(visibleWidth / step);
     if(window.innerWidth <= 749) {
-      itemsInEveryView = 1; // মোবাইলে ১টি করে শিফট হবে
+      itemsInEveryView = 1;
     }
 
     var maxIdx = Math.max(0, cards.length - itemsInEveryView);
@@ -305,8 +326,76 @@
 
   window.addEventListener('resize', updateSlider);
   document.addEventListener('shopify:section:load', updateSlider);
-  // ইনিশিয়াল লোডের সেফটি বাফার
   setTimeout(updateSlider, 200);
+
+  // ক্যারোসেল AJAX অ্যাড-টু-কার্ট ফাংশনালিটি (অনটাইম কাউন্ট আপডেটসহ)
+  track.querySelectorAll('.carousel-ajax-add').forEach(function(button) {
+    button.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      var variantId = this.getAttribute('data-variant-id');
+      if (!variantId) return;
+
+      var self = this;
+      var originalText = self.innerText;
+      self.innerText = 'Adding...';
+      self.disabled = true;
+
+      var formData = {
+        'items': [{
+          'id': parseInt(variantId),
+          'quantity': 1
+        }]
+      };
+
+      fetch(window.Shopify.routes.root + 'cart/add.js', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      })
+      .then(function(response) { return response.json(); })
+      .then(function(data) {
+        self.innerText = 'Added!';
+        
+        // ১. রিয়েলটাইম কার্ট কাউন্ট আপডেট করা (পেজ রিফ্রেশ ছাড়া)
+        fetch(window.Shopify.routes.root + 'cart.js')
+        .then(function(res) { return res.json(); })
+        .then(function(cart) {
+          var countElements = document.querySelectorAll('.cart-count-bubble, #CartCount, .cart-link__count, [data-cart-count]');
+          countElements.forEach(function(el) {
+            el.innerText = cart.item_count;
+            if(el.classList.contains('hidden')) el.classList.remove('hidden');
+            if(el.style.display === 'none') el.style.display = 'block';
+          });
+        });
+
+        // ২. থিমের কার্ট ড্রয়ার ওপেন করার গ্লোবাল ইভেন্ট ফায়ার
+        var cartNotification = document.querySelector('cart-notification') || document.querySelector('cart-drawer');
+        if (cartNotification && typeof cartNotification.renderContents === 'function') {
+          cartNotification.renderContents(data);
+        } else {
+          document.dispatchEvent(new CustomEvent('cart:updated', {
+            bubbles: true,
+            detail: { product: data }
+          }));
+          document.dispatchEvent(new CustomEvent('ajaxProduct:added', {
+            detail: { product: data }
+          }));
+        }
+
+        setTimeout(function(){
+          self.innerText = originalText;
+          self.disabled = false;
+        }, 1800);
+      })
+      .catch(function(error) {
+        console.error('Error:', error);
+        self.innerText = 'Error';
+        self.disabled = false;
+      });
+    });
+  });
 })();
 </script>
 
