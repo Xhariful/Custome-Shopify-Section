@@ -402,26 +402,26 @@
       .then(function(data) {
         self.innerText = 'Added!';
         
-        // ১. কার্টের নতুন টোটাল কাউন্ট আনার জন্য cart.js কল করা
+
         fetch(window.Shopify.routes.root + 'cart.js')
         .then(function(res) { return res.json(); })
         .then(function(cart) {
-          // থিমের হেডার বা বুদবুদে থাকা কার্ট কাউন্টের সম্ভাব্য সব ক্লাস/আইডি খুঁজে আপডেট করা
+
           var countElements = document.querySelectorAll('.cart-count-bubble, #CartCount, .cart-link__count, [data-cart-count]');
           countElements.forEach(function(el) {
             el.innerText = cart.item_count;
-            // কাউন্ট ০ থেকে ১ হলে কিছু থিমে ডিসপ্লে হিডেন থাকে, তাই শো করানো
+
             if(el.classList.contains('hidden')) el.classList.remove('hidden');
             if(el.style.display === 'none') el.style.display = 'block';
           });
         });
 
-        // ২. Dawn বা স্ট্যান্ডার্ড থিমের কার্ট নোটিফিকেশন/ড্রয়ার পপআপ ওপেন করার ট্রিকস
+
         var cartNotification = document.querySelector('cart-notification') || document.querySelector('cart-drawer');
         if (cartNotification && typeof cartNotification.renderContents === 'function') {
           cartNotification.renderContents(data);
         } else {
-          // অন্য থিমের জন্য গ্লোবাল ইভেন্ট ফায়ার করা
+
           document.dispatchEvent(new CustomEvent('cart:updated', {
             bubbles: true,
             detail: { product: data }
