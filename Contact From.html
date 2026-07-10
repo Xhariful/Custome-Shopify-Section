@@ -1,8 +1,19 @@
 {%- style -%}
+  :root {
+    --bg-color-{{ section.id }}: {{ section.settings.bg_color }};
+    --card-bg-{{ section.id }}: {{ section.settings.card_bg_color }};
+    --info-bg-{{ section.id }}: {{ section.settings.info_bg_color }};
+    --primary-text-{{ section.id }}: {{ section.settings.primary_text_color }};
+    --secondary-text-{{ section.id }}: {{ section.settings.secondary_text_color }};
+    --brand-color-{{ section.id }}: {{ section.settings.brand_color }};
+    --brand-hover-{{ section.id }}: {{ section.settings.brand_hover_color }};
+    --border-color-{{ section.id }}: {{ section.settings.border_color }};
+  }
+
   .donati-contact-{{ section.id }} {
     padding-top: {{ section.settings.padding_top_mobile }}px;
     padding-bottom: {{ section.settings.padding_bottom_mobile }}px;
-    background-color: {{ section.settings.bg_color }};
+    background-color: var(--bg-color-{{ section.id }});
   }
 
   @media screen and (min-width: 1024px) {
@@ -21,7 +32,7 @@
     padding-right: 1rem;
     display: grid;
     grid-template-columns: 1fr;
-    gap: 2.5rem; /* gap-10 */
+    gap: 2.5rem;
   }
   @media (min-width: 1024px) {
     .contact-container {
@@ -42,21 +53,21 @@
   }
 
   .info-block {
-    border-radius: 12px; /* rounded-xl */
-    border: 1px solid #D9E2EC; /* Borders token */
-    background-color: #F5F7FA; /* Alternate section background token */
-    padding: 1.5rem; /* p-6 */
+    border-radius: 12px;
+    border: 1px solid var(--border-color-{{ section.id }});
+    background-color: var(--info-bg-{{ section.id }});
+    padding: 1.5rem;
   }
 
   .info-block__icon-box {
     display: flex;
-    height: 2.5rem; /* h-10 */
-    width: 2.5rem;  /* w-10 */
+    height: 2.5rem;
+    width: 2.5rem;
     align-items: center;
     justify-content: center;
-    border-radius: 8px; /* rounded-lg */
-    margin-bottom: 0.75rem; /* mb-3 */
-    background-color: #184E77; /* Primary brand blue */
+    border-radius: 8px;
+    margin-bottom: 0.75rem;
+    background-color: var(--brand-color-{{ section.id }});
     color: #ffffff;
   }
   .info-block__icon-box svg {
@@ -66,8 +77,8 @@
 
   .info-block__title {
     font-family: 'Montserrat', sans-serif;
-    font-weight: 600; /* H3 weight token */
-    color: #1F2933; /* Primary text */
+    font-weight: 600;
+    color: var(--primary-text-{{ section.id }});
     margin: 0 0 0.5rem 0;
     font-size: 16px;
     line-height: 1.4;
@@ -76,8 +87,8 @@
   .info-block__line {
     font-family: 'Inter', sans-serif;
     font-weight: 400;
-    color: #5B6770; /* Secondary text */
-    font-size: 14px; /* Small text token */
+    color: var(--secondary-text-{{ section.id }});
+    font-size: 14px;
     line-height: 1.5;
   }
 
@@ -92,21 +103,21 @@
   }
 
   .form-card {
-    border-radius: 16px; /* rounded-2xl */
-    border: 1px solid #D9E2EC; /* Borders token */
-    background-color: #ffffff;
-    padding: 2rem; /* p-8 */
+    border-radius: 16px;
+    border: 1px solid var(--border-color-{{ section.id }});
+    background-color: var(--card-bg-{{ section.id }});
+    padding: 2rem;
   }
   @media (min-width: 1024px) {
     .form-card {
-      padding: 2.5rem; /* lg:p-10 */
+      padding: 2.5rem;
     }
   }
 
   .form-card__title {
     font-family: 'Montserrat', sans-serif;
-    font-weight: 700; /* H1/H2 weight token */
-    color: #1F2933;
+    font-weight: 700;
+    color: var(--primary-text-{{ section.id }});
     margin: 0 0 0.5rem 0;
     font-size: 28px;
     line-height: 1.2;
@@ -116,8 +127,8 @@
   .form-card__subtitle {
     font-family: 'Inter', sans-serif;
     font-weight: 400;
-    color: #5B6770; /* Secondary text */
-    font-size: 16px; /* Body text token */
+    color: var(--secondary-text-{{ section.id }});
+    font-size: 16px;
     line-height: 1.5;
     margin: 0 0 2rem 0;
   }
@@ -127,8 +138,8 @@
     border-radius: 8px;
     padding: 1.5rem;
     text-align: center;
-    background-color: #D6EAF5; /* Secondary light blue */
-    color: #184E77; /* Primary brand blue */
+    background-color: #D6EAF5;
+    color: #184E77;
     font-family: 'Inter', sans-serif;
     margin-bottom: 2rem;
   }
@@ -157,7 +168,7 @@
   .contact-native-form {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 1.25rem; /* gap-5 */
+    gap: 1.25rem;
   }
   @media (min-width: 640px) {
     .contact-native-form {
@@ -178,21 +189,21 @@
   .form-label {
     display: block;
     font-family: 'Inter', sans-serif;
-    font-weight: 500; /* Body text weight token */
-    font-size: 14px; /* Small text hierarchy */
-    color: #1F2933; /* Primary text */
-    margin-bottom: 0.375rem; /* mb-1.5 */
+    font-weight: 500;
+    font-size: 14px;
+    color: var(--primary-text-{{ section.id }});
+    margin-bottom: 0.375rem;
   }
 
   .form-input, .form-select, .form-textarea {
     width: 100%;
-    border-radius: 8px; /* Recommended border radius token */
-    border: 1px solid #D9E2EC; /* Borders design token */
+    border-radius: 8px;
+    border: 1px solid var(--border-color-{{ section.id }});
     padding: 12px 16px;
     font-family: 'Inter', sans-serif;
     font-size: 14px;
-    color: #1F2933;
-    background-color: #ffffff;
+    color: var(--primary-text-{{ section.id }});
+    background-color: var(--card-bg-{{ section.id }});
     transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
     -webkit-appearance: none;
     appearance: none;
@@ -208,7 +219,7 @@
 
   .form-input:focus, .form-select:focus, .form-textarea:focus {
     outline: none;
-    border-color: #184E77;
+    border-color: var(--brand-color-{{ section.id }});
     box-shadow: 0 0 0 3px rgba(24, 78, 119, 0.15);
   }
 
@@ -224,17 +235,17 @@
 
   .form-privacy-checkbox {
     margin-top: 0.25rem;
-    accent-color: #184E77;
+    accent-color: var(--brand-color-{{ section.id }});
   }
 
   .form-privacy-label {
     font-family: 'Inter', sans-serif;
-    font-size: 14px; /* Small Text token scale */
-    color: #5B6770; /* Secondary text token */
+    font-size: 14px;
+    color: var(--secondary-text-{{ section.id }});
     line-height: 1.4;
   }
   .form-privacy-label a {
-    color: #184E77;
+    color: var(--brand-color-{{ section.id }});
     text-decoration: underline;
   }
 
@@ -244,20 +255,20 @@
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    border-radius: 8px; /* Recommended token */
+    border-radius: 8px;
     border: none;
     font-family: 'Inter', sans-serif;
     font-weight: 600;
     font-size: 16px;
-    background-color: #184E77; /* Primary CTA */
+    background-color: var(--brand-color-{{ section.id }});
     color: #ffffff;
-    padding: 14px 28px; /* Recommended padding token */
+    padding: 14px 28px;
     cursor: pointer;
     transition: background-color 0.25s ease-in-out;
     width: auto;
   }
   .form-submit-btn:hover {
-    background-color: #133B5C; /* Primary CTA Hover token */
+    background-color: var(--brand-hover-{{ section.id }});
   }
 
   .form-submit-btn svg {
@@ -399,10 +410,56 @@
   "name": "Contact & Form",
   "settings": [
     {
+      "type": "header",
+      "content": "Color Settings"
+    },
+    {
       "type": "color",
       "id": "bg_color",
       "label": "Section Background Color",
       "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "card_bg_color",
+      "label": "Form Card Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "info_bg_color",
+      "label": "Info Box Background",
+      "default": "#f5f7fa"
+    },
+    {
+      "type": "color",
+      "id": "primary_text_color",
+      "label": "Primary Text Color",
+      "default": "#1f2933"
+    },
+    {
+      "type": "color",
+      "id": "secondary_text_color",
+      "label": "Secondary Text Color",
+      "default": "#5b6770"
+    },
+    {
+      "type": "color",
+      "id": "brand_color",
+      "label": "Primary Brand Color (Buttons & Icons)",
+      "default": "#184e77"
+    },
+    {
+      "type": "color",
+      "id": "brand_hover_color",
+      "label": "Button Hover Color",
+      "default": "#133b5c"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border Color",
+      "default": "#d9e2ec"
     },
     {
       "type": "header",
