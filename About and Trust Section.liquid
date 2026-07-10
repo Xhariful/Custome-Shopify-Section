@@ -1,0 +1,393 @@
+{%- style -%}
+  .custom-about-section-{{ section.id }} {
+    background-color: {{ section.settings.bg_color }};
+    color: {{ section.settings.text_color }};
+    padding-top: {{ section.settings.padding_top_mb }}px;
+    padding-bottom: {{ section.settings.padding_bottom_mb }}px;
+  }
+  
+  .custom-about-section-{{ section.id }} .section-container {
+    max-width: {{ section.settings.container_width }}px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  .custom-about-section-{{ section.id }} .heading-top {
+    font-size: {{ section.settings.heading_size_mb }}px;
+    color: {{ section.settings.heading_color }};
+    margin-bottom: 20px;
+    font-weight: bold;
+  }
+
+  .custom-about-section-{{ section.id }} .desc-p {
+    color: {{ section.settings.desc_color }};
+    font-size: 16px;
+    line-height: 1.6;
+    margin-bottom: 15px;
+  }
+
+  /* Counter Cards Grid */
+  .custom-about-section-{{ section.id }} .counter-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+    margin-top: 40px;
+    margin-bottom: 50px;
+  }
+
+  .custom-about-section-{{ section.id }} .counter-card {
+    background-color: {{ section.settings.card_bg_color }};
+    border: 1px solid {{ section.settings.card_border_color }};
+    border-radius: 12px;
+    padding: 30px 20px;
+    text-align: center;
+  }
+
+  .custom-about-section-{{ section.id }} .counter-number {
+    font-size: 36px;
+    font-weight: bold;
+    color: {{ section.settings.accent_color }};
+    margin-bottom: 8px;
+  }
+
+  .custom-about-section-{{ section.id }} .counter-label {
+    font-size: 14px;
+    color: {{ section.settings.desc_color }};
+  }
+
+  /* Trust Badges Grid */
+  .custom-about-section-{{ section.id }} .trust-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 15px;
+    margin-top: 25px;
+  }
+
+  .custom-about-section-{{ section.id }} .trust-card {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background-color: {{ section.settings.card_bg_color }};
+    border: 1px solid {{ section.settings.card_border_color }};
+    border-radius: 8px;
+    padding: 15px;
+  }
+
+  .custom-about-section-{{ section.id }} .trust-icon svg {
+
+    width: 32px;
+    height: 32px;
+    font-size: 32px;
+    fill: none !important;
+    stroke-width: 2px;
+    stroke: {{ section.settings.accent_color }}!important;
+  }
+
+  .custom-about-section-{{ section.id }} .trust-title {
+    font-size: 14px;
+    font-weight: bold;
+    color: {{ section.settings.text_color }};
+  }
+
+  .custom-about-section-{{ section.id }} .trust-sub {
+    font-size: 12px;
+    color: {{ section.settings.desc_color }};
+    margin-top: 2px;
+  }
+
+  /* Desktop Responsiveness */
+  @media screen and (min-width: 769px) {
+    .custom-about-section-{{ section.id }} {
+      padding-top: {{ section.settings.padding_top_dt }}px;
+      padding-bottom: {{ section.settings.padding_bottom_dt }}px;
+    }
+    .custom-about-section-{{ section.id }} .heading-top {
+      font-size: {{ section.settings.heading_size_dt }}px;
+    }
+    .custom-about-section-{{ section.id }} .counter-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .custom-about-section-{{ section.id }} .trust-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+{%- endstyle -%}
+
+<section class="custom-about-section-{{ section.id }}">
+  <div class="section-container">
+    
+    <!-- Top Content -->
+    {% if section.settings.title != blank %}
+      <h2 class="heading-top">{{ section.settings.title }}</h2>
+    {% endif %}
+    
+    {% if section.settings.desc_1 != blank %}
+      <p class="desc-p">{{ section.settings.desc_1 }}</p>
+    {% endif %}
+    
+    {% if section.settings.desc_2 != blank %}
+      <p class="desc-p">{{ section.settings.desc_2 }}</p>
+    {% endif %}
+
+    <!-- Counter Cards (Blocks) -->
+    <div class="counter-grid">
+      {% for block in section.blocks %}
+        {% if block.type == 'counter_card' %}
+          <div class="counter-card" {{ block.shopify_attributes }}>
+            <div class="counter-number">{{ block.settings.number }}</div>
+            <div class="counter-label">{{ block.settings.label }}</div>
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+
+    <!-- Bottom Content Title -->
+    {% if section.settings.bottom_title != blank %}
+      <h3 class="heading-top" style="font-size: calc({{ section.settings.heading_size_mb }}px * 0.85);">
+        {{ section.settings.bottom_title }}
+      </h3>
+    {% endif %}
+
+    <!-- Trust Badges (Blocks) -->
+    <div class="trust-grid">
+      {% for block in section.blocks %}
+        {% if block.type == 'trust_badge' %}
+          <div class="trust-card" {{ block.shopify_attributes }}>
+            <div class="trust-icon">
+              {% if block.settings.custom_svg != blank %}
+                {{ block.settings.custom_svg }}
+              {% else %}
+                <!-- Default Dynamic Shield Icon -->
+                <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              {% endif %}
+            </div>
+            <div>
+              <div class="trust-title">{{ block.settings.title }}</div>
+              <div class="trust-sub">{{ block.settings.subtitle }}</div>
+            </div>
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "About & Trust Section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section Width & Layout"
+    },
+    {
+      "type": "range",
+      "id": "container_width",
+      "min": 800,
+      "max": 1600,
+      "step": 50,
+      "unit": "px",
+      "label": "Section Max Width",
+      "default": 1200
+    },
+    {
+      "type": "header",
+      "content": "Content Control"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Top Heading",
+      "default": "About Apex Sims"
+    },
+    {
+      "type": "textarea",
+      "id": "desc_1",
+      "label": "Paragraph 1",
+      "default": "Apex Sims was founded by sim enthusiasts who were tired of guesswork..."
+    },
+    {
+      "type": "textarea",
+      "id": "desc_2",
+      "label": "Paragraph 2",
+      "default": "From direct-drive racing rigs to cockpit-grade flight controls..."
+    },
+    {
+      "type": "text",
+      "id": "bottom_title",
+      "label": "Bottom Heading",
+      "default": "Why buy from us"
+    },
+    {
+      "type": "header",
+      "content": "Style & Colors"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background Color",
+      "default": "#0b0f12"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "desc_color",
+      "label": "Description/Label Color",
+      "default": "#9ca3af"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent Color (Numbers/Icons)",
+      "default": "#00f0ff"
+    },
+    {
+      "type": "color",
+      "id": "card_bg_color",
+      "label": "Card Background",
+      "default": "#111827"
+    },
+    {
+      "type": "color",
+      "id": "card_border_color",
+      "label": "Card Border",
+      "default": "#1f2937"
+    },
+    {
+      "type": "header",
+      "content": "Typography & Spacing"
+    },
+    {
+      "type": "range",
+      "id": "heading_size_dt",
+      "min": 24,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "label": "Heading Size (Desktop)",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "heading_size_mb",
+      "min": 20,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Heading Size (Mobile)",
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "padding_top_dt",
+      "min": 0,
+      "max": 150,
+      "step": 5,
+      "unit": "px",
+      "label": "Padding Top (Desktop)",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_dt",
+      "min": 0,
+      "max": 150,
+      "step": 5,
+      "unit": "px",
+      "label": "Padding Bottom (Desktop)",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mb",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Padding Top (Mobile)",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mb",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Padding Bottom (Mobile)",
+      "default": 40
+    }
+  ],
+  "blocks": [
+    {
+      "type": "counter_card",
+      "name": "Counter Card",
+      "limit": 3,
+      "settings": [
+        {
+          "type": "text",
+          "id": "number",
+          "label": "Number/Stat",
+          "default": "12+"
+        },
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label",
+          "default": "Curated products"
+        }
+      ]
+    },
+    {
+      "type": "trust_badge",
+      "name": "Trust Badge",
+      "limit": 4,
+      "settings": [
+        {
+          "type": "html",
+          "id": "custom_svg",
+          "label": "Custom SVG Icon Code (Optional)"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "2-Year Warranty"
+        },
+        {
+          "type": "text",
+          "id": "subtitle",
+          "label": "Subtitle",
+          "default": "On every rig"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "About & Trust Section",
+      "blocks": [
+        { "type": "counter_card", "settings": { "number": "12+", "label": "Curated products" } },
+        { "type": "counter_card", "settings": { "number": "8", "label": "Premium brands" } },
+        { "type": "counter_card", "settings": { "number": "24/7", "label": "Enthusiast support" } },
+        { "type": "trust_badge", "settings": { "title": "2-Year Warranty", "subtitle": "On every rig" } },
+        { "type": "trust_badge", "settings": { "title": "Free Insured Shipping", "subtitle": "Worldwide" } },
+        { "type": "trust_badge", "settings": { "title": "30-Day Returns", "subtitle": "Hassle-free" } },
+        { "type": "trust_badge", "settings": { "title": "Secure Checkout", "subtitle": "256-bit SSL" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

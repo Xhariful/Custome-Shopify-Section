@@ -1,0 +1,527 @@
+{%- style -%}
+  #faq-section-{{ section.id }} {
+    position: relative;
+    max-width: 100%;
+    margin: {{ section.settings.margin_top }}px auto {{ section.settings.margin_bottom }}px auto;
+    padding: {{ section.settings.padding_vertical }}px {{ section.settings.padding_horizontal }}px;
+    font-family: inherit;
+    
+    {%- if section.settings.bg_image != blank -%}
+      background-image: linear-gradient(to bottom, {{ section.settings.bg_overlay_color }}, {{ section.settings.bg_overlay_color }}), url('{{ section.settings.bg_image | image_url: width: 2000 }}');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    {%- else -%}
+      background-color: {{ section.settings.section_bg_color }};
+    {%- endif -%}
+  }
+
+  #faq-section-{{ section.id }} .faq-inner-container {
+    max-width: {{ section.settings.container_width }}px;
+    margin: 0 auto;
+  }
+
+  #faq-section-{{ section.id }} .faq-title-area {
+    margin-bottom: 40px;
+    text-align: {{ section.settings.text_alignment }};
+  }
+
+  #faq-section-{{ section.id }} .faq-heading {
+    color: {{ section.settings.heading_color }};
+    font-size: 38px;
+    font-weight: 700;
+    margin: 0 0 12px 0;
+    letter-spacing: -0.5px;
+  }
+
+  #faq-section-{{ section.id }} .faq-subheading {
+    color: {{ section.settings.subheading_color }};
+    font-size: 16px;
+    margin: 0;
+    opacity: 0.85;
+  }
+
+  #faq-section-{{ section.id }} .faq-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: {{ section.settings.gap_between }}px;
+  }
+
+  /* Base Item Design */
+  #faq-section-{{ section.id }} .faq-item {
+    background-color: {{ section.settings.item_bg_color }};
+    border: 1px solid {{ section.settings.item_border_color }};
+    border-radius: {{ section.settings.border_radius }}px;
+    overflow: hidden;
+    transition: background-color 0.4s ease, border-color 0.4s ease, transform 0.4s ease, box-shadow 0.4s ease;
+  }
+
+  #faq-section-{{ section.id }} .faq-item:hover {
+    border-color: {{ section.settings.primary_color | color_modify: 'alpha', 0.4 }};
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.6);
+  }
+
+  /* 🔥 Optimized Ultra Neon Shadow Glow Control */
+  #faq-section-{{ section.id }} .faq-item.is-open {
+    background-color: {{ section.settings.item_active_bg_color }};
+    border-color: {{ section.settings.primary_color }};
+    transform: translateY(-2px);
+    
+    /* Dynamic Shopify Schema Powered Box Shadow */
+    {%- assign glow_color = section.settings.primary_color -%}
+    {%- assign glow_opacity = section.settings.shadow_opacity | divided_by: 100.0 -%}
+    {%- assign glow_size = section.settings.shadow_blur -%}
+    {%- assign glow_spread = section.settings.shadow_spread -%}
+    
+    box-shadow: 0 0 15px {{ section.settings.primary_color }};
+  }
+
+  #faq-section-{{ section.id }} .faq-trigger {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    background: none;
+    border: none;
+    padding: {{ section.settings.item_padding }}px;
+    font-weight: 600;
+    font-size: 17px;
+    text-align: left;
+    cursor: pointer;
+    color: {{ section.settings.item_text_color }};
+    gap: 20px;
+  }
+
+  #faq-section-{{ section.id }} .faq-item.is-open .faq-trigger {
+    color: {{ section.settings.item_active_text_color }};
+  }
+
+  /* Icon Animation & Glow */
+  #faq-section-{{ section.id }} .faq-icon-box {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background-color: rgba(255,255,255,0.05);
+    color: {{ section.settings.item_text_color }};
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.3s, color 0.3s, box-shadow 0.3s;
+    flex-shrink: 0;
+  }
+
+  #faq-section-{{ section.id }} .faq-item.is-open .faq-icon-box {
+    background-color: {{ section.settings.primary_color }};
+    color: #ffffff;
+    transform: rotate(180deg);
+    box-shadow: 0 0 15px {{ section.settings.primary_color }};
+  }
+
+  #faq-section-{{ section.id }} .faq-icon-box svg {
+    width: 16px;
+    height: 16px;
+    fill: currentColor;
+  }
+
+  /* Smooth Slide Content Wrap */
+  #faq-section-{{ section.id }} .faq-content-wrap {
+    height: 0;
+    overflow: hidden;
+    transition: height 0.35s cubic-bezier(0.25, 1, 0.5, 1);
+  }
+
+  #faq-section-{{ section.id }} .faq-content {
+    padding: 0 {{ section.settings.item_padding }}px {{ section.settings.item_padding }}px {{ section.settings.item_padding }}px;
+    color: {{ section.settings.content_text_color }};
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  /* Responsive Fixes */
+  @media (max-width: 767px) {
+    #faq-section-{{ section.id }} .faq-heading {
+      font-size: 28px;
+    }
+    #faq-section-{{ section.id }} .faq-trigger {
+      font-size: 15px;
+      padding: 18px;
+    }
+    #faq-section-{{ section.id }} .faq-content {
+      font-size: 14px;
+      padding: 0 18px 18px 18px;
+    }
+  }
+{%- endstyle -%}
+
+<section id="faq-section-{{ section.id }}" class="custom-faq-js-section">
+  <div class="faq-inner-container">
+    <div class="faq-title-area">
+      {%- if section.settings.heading != blank -%}
+        <h2 class="faq-heading">{{ section.settings.heading }}</h2>
+      {%- endif -%}
+      {%- if section.settings.subheading != blank -%}
+        <p class="faq-subheading">{{ section.settings.subheading }}</p>
+      {%- endif -%}
+    </div>
+
+    <div class="faq-wrapper">
+      {%- for block in section.blocks -%}
+        {%- if block.settings.question != blank and block.settings.answer != blank -%}
+          {%- assign is_first_open = false -%}
+          {%- if forloop.first and section.settings.open_first -%}
+            {%- assign is_first_open = true -%}
+          {%- endif -%}
+          
+          <div class="faq-item {% if is_first_open %}is-open{% endif %}" {{ block.shopify_attributes }}>
+            <button class="faq-trigger" type="button" aria-expanded="{% if is_first_open %}true{% endif %}">
+              <span>{{ block.settings.question }}</span>
+              <span class="faq-icon-box">
+                <svg viewBox="0 0 24 24">
+                  <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
+                </svg>
+              </span>
+            </button>
+            <div class="faq-content-wrap" {% if is_first_open %}style="height: auto;"{% endif %}>
+              <div class="faq-content">
+                {{ block.settings.answer }}
+              </div>
+            </div>
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+<script>
+  (function() {
+    function initFaqAccordion(section) {
+      if (!section) return;
+      const items = section.querySelectorAll('.faq-item');
+
+      items.forEach(item => {
+        const trigger = item.querySelector('.faq-trigger');
+        const contentWrap = item.querySelector('.faq-content-wrap');
+        
+        if (trigger.dataset.faqBound === 'true') return;
+        trigger.dataset.faqBound = 'true';
+
+        trigger.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          
+          const isOpen = item.classList.contains('is-open');
+
+          items.forEach(otherItem => {
+            if (otherItem !== item && otherItem.classList.contains('is-open')) {
+              otherItem.classList.remove('is-open');
+              const otherWrap = otherItem.querySelector('.faq-content-wrap');
+              otherWrap.style.height = otherWrap.scrollHeight + 'px';
+              setTimeout(() => { otherWrap.style.height = '0'; }, 10);
+              otherItem.querySelector('.faq-trigger').setAttribute('aria-expanded', 'false');
+            }
+          });
+
+          if (isOpen) {
+            item.classList.remove('is-open');
+            contentWrap.style.height = contentWrap.scrollHeight + 'px';
+            setTimeout(() => { contentWrap.style.height = '0'; }, 10);
+            trigger.setAttribute('aria-expanded', 'false');
+          } else {
+            item.classList.add('is-open');
+            contentWrap.style.height = contentWrap.scrollHeight + 'px';
+            trigger.setAttribute('aria-expanded', 'true');
+            
+            contentWrap.addEventListener('transitionend', function onEnd() {
+              if (item.classList.contains('is-open')) {
+                contentWrap.style.height = 'auto';
+              }
+              contentWrap.removeEventListener('transitionend', onEnd);
+            });
+          }
+        });
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const section = document.querySelector('#faq-section-{{ section.id }}');
+      initFaqAccordion(section);
+    });
+
+    document.addEventListener('shopify:section:load', function(e) {
+      if (e.target.classList.contains('custom-faq-js-section') || e.target.querySelector('#faq-section-{{ section.id }}')) {
+        const section = document.querySelector('#faq-section-{{ section.id }}');
+        initFaqAccordion(section);
+      }
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Custom FAQ Accordion",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section Layout & Width"
+    },
+    {
+      "type": "range",
+      "id": "container_width",
+      "min": 400,
+      "max": 1200,
+      "step": 50,
+      "default": 850,
+      "label": "Max Content Width (px)"
+    },
+    {
+      "type": "range",
+      "id": "margin_top",
+      "min": 0,
+      "max": 120,
+      "step": 5,
+      "default": 60,
+      "label": "Margin Top (px)"
+    },
+    {
+      "type": "range",
+      "id": "margin_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 5,
+      "default": 60,
+      "label": "Margin Bottom (px)"
+    },
+    {
+      "type": "range",
+      "id": "padding_vertical",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "default": 40,
+      "label": "Section Inner Top/Bottom Padding (px)"
+    },
+    {
+      "type": "range",
+      "id": "padding_horizontal",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "default": 20,
+      "label": "Side Padding (px)"
+    },
+    {
+      "type": "header",
+      "content": "Background Control"
+    },
+    {
+      "type": "image_picker",
+      "id": "bg_image",
+      "label": "Section Background Image"
+    },
+    {
+      "type": "color",
+      "id": "bg_overlay_color",
+      "default": "rgba(10, 10, 10, 0.85)",
+      "label": "Background Image Overlay Color"
+    },
+    {
+      "type": "color",
+      "id": "section_bg_color",
+      "default": "#0b0b0c",
+      "label": "Section Background Color (If no image)"
+    },
+    {
+      "type": "header",
+      "content": "Brand Colors"
+    },
+    {
+      "type": "color",
+      "id": "primary_color",
+      "default": "#FF0000",
+      "label": "Primary Accent Color (Glow/Active)"
+    },
+    {
+      "type": "header",
+      "content": "Active State Shadow Controls"
+    },
+    {
+      "type": "range",
+      "id": "shadow_opacity",
+      "min": 10,
+      "max": 100,
+      "step": 5,
+      "default": 40,
+      "label": "Glow Shadow Opacity (%)"
+    },
+    {
+      "type": "range",
+      "id": "shadow_blur",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "default": 30,
+      "label": "Glow Blur Radius (px)"
+    },
+    {
+      "type": "range",
+      "id": "shadow_spread",
+      "min": -5,
+      "max": 10,
+      "step": 1,
+      "default": 1,
+      "label": "Glow Spread Size (px)"
+    },
+    {
+      "type": "header",
+      "content": "Header Typography"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "default": "Frequently asked questions",
+      "label": "Heading"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "default": "Everything you need to know before you buy.",
+      "label": "Subheading"
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" }
+      ],
+      "default": "left",
+      "label": "Text Alignment"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "default": "#ffffff",
+      "label": "Heading Color"
+    },
+    {
+      "type": "color",
+      "id": "subheading_color",
+      "default": "#a1a1aa",
+      "label": "Subheading Color"
+    },
+    {
+      "type": "header",
+      "content": "FAQ Item Style (Normal State)"
+    },
+    {
+      "type": "color",
+      "id": "item_bg_color",
+      "default": "#121214",
+      "label": "Item Background"
+    },
+    {
+      "type": "color",
+      "id": "item_border_color",
+      "default": "#222226",
+      "label": "Item Border"
+    },
+    {
+      "type": "color",
+      "id": "item_text_color",
+      "default": "#ffffff",
+      "label": "Question Text Color"
+    },
+    {
+      "type": "header",
+      "content": "FAQ Item Style (Active State)"
+    },
+    {
+      "type": "color",
+      "id": "item_active_bg_color",
+      "default": "#16161a",
+      "label": "Active Background"
+    },
+    {
+      "type": "color",
+      "id": "item_active_text_color",
+      "default": "#ffffff",
+      "label": "Active Question Color"
+    },
+    {
+      "type": "color",
+      "id": "content_text_color",
+      "default": "#cbd5e1",
+      "label": "Answer Text Color"
+    },
+    {
+      "type": "header",
+      "content": "Spacing & Borders"
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "min": 0,
+      "max": 24,
+      "step": 2,
+      "default": 12,
+      "label": "Border Radius (px)"
+    },
+    {
+      "type": "range",
+      "id": "item_padding",
+      "min": 12,
+      "max": 40,
+      "step": 2,
+      "default": 24,
+      "label": "Box Internal Padding (px)"
+    },
+    {
+      "type": "range",
+      "id": "gap_between",
+      "min": 5,
+      "max": 40,
+      "step": 1,
+      "default": 14,
+      "label": "Gap Between FAQ Items (px)"
+    },
+    {
+      "type": "checkbox",
+      "id": "open_first",
+      "default": true,
+      "label": "Open first FAQ item by default"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "faq_block",
+      "name": "FAQ Item",
+      "settings": [
+        {
+          "type": "text",
+          "id": "question",
+          "label": "Question",
+          "default": "Which platforms are your simulators compatible with?"
+        },
+        {
+          "type": "richtext",
+          "id": "answer",
+          "label": "Answer",
+          "default": "<p>Compatibility varies by product. Every product page lists supported platforms (PC, PlayStation, Xbox). You can also filter the collection pages by compatibility to see exactly what works with your setup.</p>"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom FAQ Accordion",
+      "blocks": [
+        { "type": "faq_block" },
+        { "type": "faq_block" },
+        { "type": "faq_block" }
+      ]
+    }
+  ]
+}
+{% endschema %}
